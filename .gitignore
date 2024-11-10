@@ -1,3 +1,7 @@
 .pio
 .vscode
 .idea
+.git
+
+# macOS hidden files
+.DS_Store
