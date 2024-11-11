@@ -1,14 +1,17 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "pitches.h"
-#include "U8glib.h"
-#include <Keypad.h>
 #include <ArduinoSTL.h>
-#include "TicTacToe.h"
-#include "../utils/utils.h"
+#include <Keypad.h>
+
 #include <array>
+
+#include "../Menu/menu.h"
+#include "../utils/utils.h"
 #include "Arduino.h"
+#include "TicTacToe.h"
+#include "U8glib.h"
+#include "pitches.h"
 
 using namespace std;
 
@@ -33,8 +36,7 @@ extern int drawMelodySize;
 
 extern bool playWinDrawMelody;
 
-typedef enum
-{
+typedef enum {
   MENU,
   STANDING_X,
   STANDING_O,
@@ -53,18 +55,20 @@ extern char board[3][3][2];
 
 extern bool boardDrawn;
 
-class TicTacToeGame
-{
-private:
+class TicTacToeGame {
+ private:
   int buzzerPin;
   int redLightPin;
   int yellowLightPin;
   int greenLightPin;
   U8GLIB_SSD1306_128X64 u8g;
   Keypad &keypad;
+  GameMenu gameMenu;
 
-public:
-  TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin, int greenLightPin, U8GLIB_SSD1306_128X64 u8g, Keypad &keypad);
+ public:
+  TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin,
+                int greenLightPin, U8GLIB_SSD1306_128X64 u8g, Keypad &keypad,
+                GameMenu gameMenu);
   void playMusic(int melody[], int noteDurations[], int size);
   void setupTicTacToe();
   void initializeBoard();
@@ -78,4 +82,4 @@ public:
   void mainLoopTic();
 };
 
-#endif // MAIN_H
+#endif  // MAIN_H

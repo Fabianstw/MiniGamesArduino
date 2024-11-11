@@ -25,4 +25,4 @@
  */
 int randInt(int min, int max);
 
-#endif // RANDOM_HELPER_H
+#endif  // RANDOM_HELPER_H

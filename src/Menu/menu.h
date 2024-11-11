@@ -1,29 +1,26 @@
 #ifndef GAMEMENU_H
 #define GAMEMENU_H
 
-#include <U8glib.h>
 #include <Keypad.h>
+#include <U8glib.h>
+
 #include "Arduino.h"
 
-class GameMenu
-{
-public:
-    GameMenu(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad);
-    void drawMenuOptions();
-    void getUserInputMenu();
-    void mainLoopMenu();
+class GameMenu {
+ public:
+  GameMenu(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad);
 
-    U8GLIB_SSD1306_128X64 &u8g;
-    Keypad &keypad;
+  enum gameChoice { MENUGAMECHOICE, TICTACTOE, SIMONSAYS };
 
-    enum gameChoice
-    {
-        MENUGAMECHOICE,
-        TICTACTOE,
-        SNAKE
-    };
+  void drawMenuOptions();
+  void getUserInputMenu();
+  void mainLoopMenu();
+  void setGameChoice(gameChoice choice);
 
-    static gameChoice gameCH;
-    gameChoice getGameChoice();
+  U8GLIB_SSD1306_128X64 &u8g;
+  Keypad &keypad;
+
+  static gameChoice gameCH;
+  gameChoice getGameChoice();
 };
 #endif
