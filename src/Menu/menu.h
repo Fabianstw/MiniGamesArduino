@@ -5,17 +5,19 @@
 #include <Keypad.h>
 #include "Arduino.h"
 
-class GameMenu {
+class GameMenu
+{
 public:
-    GameMenu(U8GLIB_SSD1306_128X64& u8g, Keypad& keypad);
+    GameMenu(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad);
     void drawMenuOptions();
     void getUserInputMenu();
     void mainLoopMenu();
-    
-    U8GLIB_SSD1306_128X64& u8g;
-    Keypad& keypad;
 
-    enum gameChoice {
+    U8GLIB_SSD1306_128X64 &u8g;
+    Keypad &keypad;
+
+    enum gameChoice
+    {
         MENUGAMECHOICE,
         TICTACTOE,
         SNAKE

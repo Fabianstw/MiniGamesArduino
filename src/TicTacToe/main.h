@@ -33,13 +33,14 @@ extern int drawMelodySize;
 
 extern bool playWinDrawMelody;
 
-typedef enum {
-    MENU,
-    STANDING_X,
-    STANDING_O,
-    DRAW,
-    GAMEPVSP,
-    GAMEPVSAI,
+typedef enum
+{
+  MENU,
+  STANDING_X,
+  STANDING_O,
+  DRAW,
+  GAMEPVSP,
+  GAMEPVSAI,
 } GameStatus;
 
 extern int player;
@@ -52,28 +53,29 @@ extern char board[3][3][2];
 
 extern bool boardDrawn;
 
-class TicTacToeGame {
-  private:
-    int buzzerPin;
-    int redLightPin;
-    int yellowLightPin;
-    int greenLightPin;
-    U8GLIB_SSD1306_128X64 u8g;
-    Keypad &keypad;
+class TicTacToeGame
+{
+private:
+  int buzzerPin;
+  int redLightPin;
+  int yellowLightPin;
+  int greenLightPin;
+  U8GLIB_SSD1306_128X64 u8g;
+  Keypad &keypad;
 
-  public:
-    TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin, int greenLightPin, U8GLIB_SSD1306_128X64 u8g, Keypad &keypad);
-    void playMusic(int melody[], int noteDurations[], int size);
-    void setupTicTacToe();
-    void initializeBoard();
-    void drawBoard(void);
-    void drawMenu(void);
-    void resetLights();
-    void getUserInputGame();
-    void getUserInputMenu();
-    void getAIInput();
-    void getUserInputStanding();
-    void mainLoopTic();
+public:
+  TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin, int greenLightPin, U8GLIB_SSD1306_128X64 u8g, Keypad &keypad);
+  void playMusic(int melody[], int noteDurations[], int size);
+  void setupTicTacToe();
+  void initializeBoard();
+  void drawBoard(void);
+  void drawMenu(void);
+  void resetLights();
+  void getUserInputGame();
+  void getUserInputMenu();
+  void getAIInput();
+  void getUserInputStanding();
+  void mainLoopTic();
 };
 
 #endif // MAIN_H
