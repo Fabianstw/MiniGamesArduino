@@ -1,9 +1,11 @@
 #include <Keypad.h>
 
+#include "Arduino.h"
 #include "Menu/menu.h"
 #include "SimonSays/SSmain.h"
 #include "TicTacToe/main.h"
 #include "U8glib.h"
+#include "utils/utils.h"
 
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_DEV_0 | U8G_I2C_OPT_NO_ACK |
                           U8G_I2C_OPT_FAST);
@@ -28,11 +30,19 @@ int greenLightPin = 12;
 
 GameMenu gameMenu = GameMenu(u8g, keypad);
 
-void setup() {
+/**
+ * Setups the pinModes for each light
+ */
+void setupPinModes() {
   pinMode(redLightPin, OUTPUT);
   pinMode(yellowLightPin, OUTPUT);
   pinMode(greenLightPin, OUTPUT);
   pinMode(blueLightPin, OUTPUT);
+}
+
+void setup() {
+  initRandomSeed();
+  setupPinModes();
 
   u8g.setFont(u8g_font_tpssb);
   u8g.setColorIndex(1);

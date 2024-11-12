@@ -56,6 +56,13 @@ extern char board[3][3][2];
 extern bool boardDrawn;
 
 class TicTacToeGame {
+ public:
+  TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin,
+                int greenLightPin, U8GLIB_SSD1306_128X64 u8g, Keypad &keypad,
+                GameMenu gameMenu);
+
+  void mainLoopTic();
+
  private:
   int buzzerPin;
   int redLightPin;
@@ -65,21 +72,33 @@ class TicTacToeGame {
   Keypad &keypad;
   GameMenu gameMenu;
 
- public:
-  TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin,
-                int greenLightPin, U8GLIB_SSD1306_128X64 u8g, Keypad &keypad,
-                GameMenu gameMenu);
   void playMusic(int melody[], int noteDurations[], int size);
   void setupTicTacToe();
   void initializeBoard();
-  void drawBoard(void);
+  void drawMainDisplay(void);
+  void drawGameStatus();
+  void drawGameStandings();
+  void drawPlayersTurn();
+  void drawBoard();
   void drawMenu(void);
   void resetLights();
   void getUserInputGame();
+  void updateBoard(int row, int col);
+  void playPlayerMoveSound();
   void getUserInputMenu();
   void getAIInput();
   void getUserInputStanding();
-  void mainLoopTic();
+  void resetGame();
+
+  void checkForGameEnding();
+  void checkForDraw();
+  void checkForWinner();
+
+  void loopEnd();
+  void loopGame();
+  void loopMenu();
+
+  void playGameEndMusic();
 };
 
 #endif  // MAIN_H

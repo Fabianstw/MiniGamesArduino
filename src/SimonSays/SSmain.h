@@ -13,6 +13,17 @@ class SimonSaysGame {
                 int redLightPin, int yellowLightPin, int greenLightPin,
                 int blueLightPin, GameMenu gameMenu);
   void mainLoopSimon();
+
+  enum phaseOfGame {
+    INSTRUCTIONS,
+    SHOWLIGHTSHOW,
+    USERINPUT,
+    WRONGINPUT,
+    CORRECT
+  };
+
+ private:
+  void drawCorrectAnswer();
   void drawInstructions();
   void drawWrongAnswer();
   void getInstructionsKey();
@@ -21,9 +32,15 @@ class SimonSaysGame {
   void screenLightShow();
   void showCorrespondingLight(int);
   void getUserInputLightIDs();
+  void comparesUserinputWithSequence(char key, int &keyInputCounter);
+  void goesToNextLevel(int keyInputCounter);
   void drawInstructionsForInput();
 
-  enum phaseOfGame { INSTRUCTIONS, SHOWLIGHTSHOW, USERINPUT, WRONGINPUT };
+  void loopPhaseCorrect();
+  void loopPhaseWronginput();
+  void loopPhaseUserinput();
+  void loopPhaseShowLightShow();
+  void loopPhaseInstructions();
 
   static phaseOfGame phase;
 

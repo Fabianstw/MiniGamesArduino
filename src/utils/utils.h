@@ -12,17 +12,8 @@
 #include <cstdlib>
 #include <ctime>
 
-/**
- * @brief Generates a random integer within a specified range.
- *
- * This function generates a random integer between the specified minimum
- * and maximum values, inclusive. It uses the standard library's rand()
- * function to generate the random number.
- *
- * @param min The minimum value of the range.
- * @param max The maximum value of the range.
- * @return A random integer between min and max, inclusive.
- */
+void initRandomSeed();
 int randInt(int min, int max);
+void lightLEDForTime(int pin, int time);
 
 #endif  // RANDOM_HELPER_H

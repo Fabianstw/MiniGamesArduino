@@ -6,21 +6,25 @@
 
 #include "Arduino.h"
 
+/**
+ * Structure of the class for the game menu
+ * Important so other classes / functions can access those functions and variables
+ */
 class GameMenu {
  public:
   GameMenu(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad);
 
-  enum gameChoice { MENUGAMECHOICE, TICTACTOE, SIMONSAYS };
+  enum currentGameChoice { MENUGAMECHOICE, TICTACTOE, SIMONSAYS };
 
   void drawMenuOptions();
   void getUserInputMenu();
   void mainLoopMenu();
-  void setGameChoice(gameChoice choice);
+  void setGameChoice(currentGameChoice choice);
 
   U8GLIB_SSD1306_128X64 &u8g;
   Keypad &keypad;
 
-  static gameChoice gameCH;
-  gameChoice getGameChoice();
+  static currentGameChoice gameCH;
+  currentGameChoice getGameChoice();
 };
 #endif
