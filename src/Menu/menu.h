@@ -8,13 +8,14 @@
 
 /**
  * Structure of the class for the game menu
- * Important so other classes / functions can access those functions and variables
+ * Important so other classes / functions can access those functions and
+ * variables
  */
 class GameMenu {
  public:
   GameMenu(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad);
 
-  enum currentGameChoice { MENUGAMECHOICE, TICTACTOE, SIMONSAYS };
+  enum currentGameChoice { MENUGAMECHOICE, TICTACTOE, SIMONSAYS, MUSIC };
 
   void drawMenuOptions();
   void getUserInputMenu();

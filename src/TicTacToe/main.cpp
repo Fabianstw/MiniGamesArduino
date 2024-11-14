@@ -46,6 +46,11 @@ int moveCoutner = 0;
 GameStatus gameStatus = MENU;
 char board[3][3][2];
 
+/**
+ * Kinda complete variable
+ * This is set and reset in the game loop
+ * So that the board can be drawn with in one iteration
+ */
 bool boardDrawn = false;
 bool setupGame = false;
 

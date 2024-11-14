@@ -23,6 +23,7 @@ void GameMenu::drawMenuOptions() {
   u8g.drawStr(0, 10, "Welcome to MiniGames");
   u8g.drawStr(0, 20, "1: Tic Tac Toe");
   u8g.drawStr(0, 30, "2: Simon Says");
+  u8g.drawStr(0, 40, "3: Music");
 }
 
 /**
@@ -35,6 +36,8 @@ void GameMenu::getUserInputMenu() {
     gameCH = TICTACTOE;
   } else if (key == '2') {
     gameCH = SIMONSAYS;
+  } else if (key == '3') {
+    gameCH = MUSIC;
   }
 }
 

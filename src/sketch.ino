@@ -2,6 +2,7 @@
 
 #include "Arduino.h"
 #include "Menu/menu.h"
+#include "Music/mainMusic.h"
 #include "SimonSays/SSmain.h"
 #include "TicTacToe/main.h"
 #include "U8glib.h"
@@ -29,7 +30,13 @@ int yellowLightPin = 9;
 int greenLightPin = 12;
 
 GameMenu gameMenu = GameMenu(u8g, keypad);
-
+MainMusic mainMusic = MainMusic(u8g, keypad, buzzerPin, gameMenu);
+SimonSaysGame simonSaysGame =
+    SimonSaysGame(u8g, keypad, buzzerPin, redLightPin, yellowLightPin,
+                  greenLightPin, blueLightPin, gameMenu);
+TicTacToeGame ticTacToeGame =
+    TicTacToeGame(buzzerPin, redLightPin, yellowLightPin, greenLightPin, u8g,
+                  keypad, gameMenu);
 /**
  * Setups the pinModes for each light
  */
@@ -54,14 +61,10 @@ void loop() {
   if (gameMenu.getGameChoice() == GameMenu::MENUGAMECHOICE) {
     gameMenu.mainLoopMenu();
   } else if (gameMenu.getGameChoice() == GameMenu::TICTACTOE) {
-    TicTacToeGame ticTacToeGame =
-        TicTacToeGame(buzzerPin, redLightPin, yellowLightPin, greenLightPin,
-                      u8g, keypad, gameMenu);
     ticTacToeGame.mainLoopTic();
   } else if (gameMenu.getGameChoice() == GameMenu::SIMONSAYS) {
-    SimonSaysGame simonSaysGame =
-        SimonSaysGame(u8g, keypad, buzzerPin, redLightPin, yellowLightPin,
-                      greenLightPin, blueLightPin, gameMenu);
     simonSaysGame.mainLoopSimon();
+  } else if (gameMenu.getGameChoice() == GameMenu::MUSIC) {
+    mainMusic.mainLoopMusic();
   }
 }
