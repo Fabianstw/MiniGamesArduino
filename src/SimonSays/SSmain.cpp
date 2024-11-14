@@ -6,6 +6,7 @@
 #include "../utils/utils.h"
 #include "Arduino.h"
 #include "U8glib.h"
+#include "pitches.h"
 
 int level = 1;
 char lightSequence[100] = {};
@@ -91,24 +92,43 @@ void SimonSaysGame::getInstructionsKey() {
 }
 
 /**
- * Shows the corresponding light for a given light ID.
+ * Shows the corresponding light and plays a sound for a given light ID.
  * @param lightID The ID of the light to show.
  */
-void SimonSaysGame::showCorrespondingLight(int lightID) {
+void SimonSaysGame::showCorrespondingLightAndPlaySound(int lightID) {
   switch (lightID) {
     case 0:
-      lightLEDForTime(greenLightPin, 500);
+      digitalWrite(greenLightPin, HIGH);
+      tone(buzzerPin, NOTE_G4, 200);
       break;
     case 1:
-      lightLEDForTime(yellowLightPin, 500);
+      digitalWrite(yellowLightPin, HIGH);
+      tone(buzzerPin, NOTE_A4, 200);
       break;
     case 2:
-      lightLEDForTime(redLightPin, 500);
+      digitalWrite(redLightPin, HIGH);
+      tone(buzzerPin, NOTE_B4, 200);
       break;
     default:
-      lightLEDForTime(blueLightPin, 500);
+      digitalWrite(blueLightPin, HIGH);
+      tone(buzzerPin, NOTE_C5, 200);
       break;
   }
+  delay(200);
+  noTone(buzzerPin);
+  delay(200);
+  resetLights();
+  delay(200);
+}
+
+/**
+ * Resets all lights to LOW.
+ */
+void SimonSaysGame::resetLights() {
+  digitalWrite(redLightPin, LOW);
+  digitalWrite(yellowLightPin, LOW);
+  digitalWrite(greenLightPin, LOW);
+  digitalWrite(blueLightPin, LOW);
 }
 
 /**
@@ -118,8 +138,7 @@ void SimonSaysGame::displayLightShow() {
   for (int i = 0; i < level; i++) {
     int randomLight = randInt(0, 3);
     lightSequence[i] = randomLight;
-    showCorrespondingLight(randomLight);
-    delay(700);
+    showCorrespondingLightAndPlaySound(randomLight);
   }
   phase = USERINPUT;
 }
@@ -156,7 +175,7 @@ void SimonSaysGame::comparesUserinputWithSequence(char key,
                                                   int &keyInputCounter) {
   if (key >= '0' && key <= '3') {
     if (lightSequence[keyInputCounter] == key - '0') {
-      showCorrespondingLight(key - '0');
+      showCorrespondingLightAndPlaySound(key - '0');
       keyInputCounter++;
     } else {
       phase = WRONGINPUT;

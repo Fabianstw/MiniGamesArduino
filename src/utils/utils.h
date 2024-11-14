@@ -14,6 +14,5 @@
 
 void initRandomSeed();
 int randInt(int min, int max);
-void lightLEDForTime(int pin, int time);
 
 #endif  // RANDOM_HELPER_H

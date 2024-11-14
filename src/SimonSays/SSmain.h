@@ -30,11 +30,13 @@ class SimonSaysGame {
   void getWrongMenuKey();
   void displayLightShow();
   void screenLightShow();
-  void showCorrespondingLight(int);
+  void showCorrespondingLightAndPlaySound(int);
   void getUserInputLightIDs();
   void comparesUserinputWithSequence(char key, int &keyInputCounter);
   void goesToNextLevel(int keyInputCounter);
   void drawInstructionsForInput();
+
+  void resetLights();
 
   void loopPhaseCorrect();
   void loopPhaseWronginput();

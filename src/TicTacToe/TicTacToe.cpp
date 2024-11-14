@@ -8,6 +8,11 @@
 
 using namespace std;
 
+/**
+ * Checks if either X or O has won the game and returns the winner
+ * If neither has won, it returns a space
+ * @param board The current ttt board
+ */
 char checkWinnerTic(char board[3][3][2]) {
   for (int i = 0; i < 3; i++) {
     // check rows and columns
@@ -88,6 +93,11 @@ int getBetterAIMove(int moveCounter, char board[3][3][2]) {
   return possibleMoves[randInt(0, possibleMoves.size() - 1)];
 }
 
+/**
+ * Checks if there is a possible move to win in one move
+ * @param board_copy The current board
+ * @param player The player to check for
+ */
 int checkPossibleOneMoveWin(char board_copy[3][3][2], char player) {
   // check the rows
   for (int i = 0; i < 3; i++) {
@@ -151,6 +161,13 @@ int checkPossibleOneMoveWin(char board_copy[3][3][2], char player) {
   return -1;
 }
 
+/**
+ * The MinMax algorithm to get the best move for the AI
+ * @param round The current round
+ * @param board_copy The current board
+ * @param player_here who's turn it is
+ *
+ */
 pair<int, int> getAIinputMinMax(int round, char board_copy[3][3][2],
                                 bool player_here) {
   // Calculate all possible games till the end
@@ -201,7 +218,7 @@ pair<int, int> getAIinputMinMax(int round, char board_copy[3][3][2],
     if ((player_here && result < bestResult) ||
         (!player_here && result > bestResult)) {
       bestResult = result;
-      move = moveIndex;  // Corrected without adding 1
+      move = moveIndex;
     }
   }
 
