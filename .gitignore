@@ -7,16 +7,16 @@
 .pio
 
 # macOS hidden files
-.DS_Store
+*.DS_Store
 
 # tex files helper
-.aux
-.fdb_latexmk
-.fls
-.log
-.nav
-.out
-.snm
-.synctex.gz
-.toc
-.vrb
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
