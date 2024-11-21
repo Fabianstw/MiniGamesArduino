@@ -1,7 +1,22 @@
-.pio
+# files for git and IDEs 
 .vscode
 .idea
 .git
 
+# files for PlatformIO
+.pio
+
 # macOS hidden files
 .DS_Store
+
+# tex files helper
+.aux
+.fdb_latexmk
+.fls
+.log
+.nav
+.out
+.snm
+.synctex.gz
+.toc
+.vrb
