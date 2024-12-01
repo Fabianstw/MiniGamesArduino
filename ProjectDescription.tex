@@ -1,0 +1,92 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{float}
+
+\begin{document}
+
+\begin{center}
+  \Large \textbf{Methods of Computer Science Education: Design} \\
+  \normalsize Wintersemester 2024/25 \\
+  \normalsize Fabian Stiewe
+\end{center}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{diagram.png}
+  \end{center}
+\end{figure}
+
+\begin{longtable}{|p{3.5cm}|p{11cm}|}
+  \hline
+  \textbf{Project name} & Mini Games using Arduino  \\ \hline
+  
+  \textbf{Storyline} & It is simple and quick to develop diverse games for the Arduino. This project includes the classic TicTacToe game (with a simple computer player), the known SimonSaysGame and a music player. 
+  \begin{itemize}
+    \item TicTacToe a simple two-player game where players take turns marking a 3x3 grid with their respective symbols (usually X and O). The objective is to be the first to get three of your symbols in a row, either horizontally, vertically, or diagonally. If all nine squares are filled without either player achieving this, the game is considered a draw.
+    \item SimonSaysGame is a memory game that uses 4 lights. The game generates a random sequence of lights, and the player must repeat the sequence in the correct order. Each round, the sequence gets longer, increasing the difficulty. The player wins by successfully repeating the sequence for a set number of rounds or loses if they make a mistake.
+    \item Music, just include your favorite songs (a song library is included in the project (clone from GitHub))
+  \end{itemize}\\ \hline
+  
+  \textbf{Target} & It is for the \textbf{fourth year} and LSSA - Liceo Scientifico Scienze Applicate \\ \hline
+  
+  \textbf{Level} & 
+  The base outline will be given to the students, so they only have to program the games.
+  \begin{itemize}
+    \item TicTacToe (intermediate)
+    \item TicTacToe AI (hard)
+    \item SimonSaysGame (intermediate)
+    \item Music (easy)
+  \end{itemize} \\ \hline
+  
+  \textbf{Learning goals} & The student should get used to program on the Arduino and Cpp. Over that they will have to learn how to use different hardware components (e.g. display, keypad, lights and so on). Depending on each student's interest they can choose to do a game with more or less hardware. Students have to acquire information themselves, depending on their project choice. Therefore, independent learning is encouraged very much. \\ \hline
+  
+  \textbf{Hardware} & Each student have to understand how to use:
+  \begin{itemize}
+    \item keypad
+    \item oled display
+  \end{itemize} 
+  Over that it depends on the preference of each student, what their project is about. Some prefer more hardware and some less, so they are not forced to a specific hardware.   
+  \\ \hline
+  
+  \textbf{Software} & The students will have to learn how to write clean and safe code. They will  \\ \hline
+  
+  \textbf{Operating description} & How the project works \\ \hline
+  
+  \textbf{Handiwork} & Nothing has to be created by hand by the students. But if they come up with a game idea which includes handiwork, they can do so. \\ \hline
+  
+  \textbf{Materials list} & 
+  Depending on the student's choice they need different materials. Students should research on their own what they need, the following list is a suggestion.
+  \begin{itemize}
+    \item wokwi-arduino-uno \textbf{(Only mandatory component)}
+    \item wokwi-buzzer
+    \item board-ssd1306
+    \item wokwi-membrane-keypad
+    \item wokwi-breadboard-half
+    \item wokwi-resistor
+    \item wokwi-led ($220 \Omega$)
+    \begin{itemize}
+      \item blue
+      \item green
+      \item red
+      \item blue
+    \end{itemize}
+    \item diverse cabels
+  \end{itemize}
+  \\ \hline
+  
+  \textbf{Lesson planning} & 
+  Classroom lesson: ... hours \newline
+  Construction: ... hour \newline
+  Software production: ... hour \newline
+  Assembly and final check: ... hours \\ 
+  \hline
+  \textbf{Project details} & pdf, pictures, video, code and more. \newline
+  \textcolor{red}{Eventually also a link to material} \\ \hline
+
+\end{longtable}
+
+\end{document}

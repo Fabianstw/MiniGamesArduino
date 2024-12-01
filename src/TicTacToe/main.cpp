@@ -321,7 +321,7 @@ void TicTacToeGame::getAIInput() {
 /**
  * Gets the user input after the game
  * So the player can see the standings
- * Any key press will get im back to the
+ * Any key press will get him back to the
  * tic tac toe menu
  */
 void TicTacToeGame::getUserInputStanding() {
@@ -432,6 +432,7 @@ void TicTacToeGame::loopGame() {
     } else {
       if (counterLastMove > 50) {
         getAIInput();
+        counterLastMove = 0;
       }
       counterLastMove++;
     }
@@ -450,6 +451,7 @@ void TicTacToeGame::loopMenu() {
 void TicTacToeGame::mainLoopTic() {
   u8g.firstPage();
   do {
+    u8g.setFont(u8g_font_tpss);
     if (gameStatus == MENU) {
       loopMenu();
     } else if (gameStatus == GAMEPVSP || gameStatus == GAMEPVSAI) {

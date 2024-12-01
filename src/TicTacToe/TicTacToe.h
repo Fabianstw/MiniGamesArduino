@@ -1,8 +1,9 @@
 #ifndef TICTACTOE_H
 #define TICTACTOE_H
 
+#include <iostream>
 #include <utility>
-using std::pair;
+using namespace std;
 
 char checkWinnerTic(char board[3][3][2]);
 int getBetterAIMove(int moveCoutner, char board[3][3][2]);
