@@ -25,6 +25,9 @@ Download those extensions for VSCode so you can try the project. *Feel free to u
 1. Clone the repository.
 2. Open the project in Visual Studio Code.
 3. Use PlatformIO to build and upload the games to your microcontroller.
+```
+pio run
+```
 4. Enjoy the games on your hardware.
 
 Or if you have an Arduino (or similar) use this. 
