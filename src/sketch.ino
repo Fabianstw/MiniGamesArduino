@@ -1,3 +1,25 @@
+/*
+sketch.ino (MiniGames Project)
+
+This file is the main file for the MiniGames project. It contains the setup and
+loop functions for the Arduino. The setup function initializes the pins and
+serial communication. The loop function contains the main game loop that
+determines which game to play based on the user's input.
+
+The MiniGames project contains two games: Tic Tac Toe and Simon Says, also some
+music sound tracks.
+
+@author: Fabian Stiewe
+@data: 10.11.2024
+
+Used libraries:
+- U8glib
+- Keypad
+Those are listed in the libaries folder, but should be installed via the Arduino
+IDE.
+
+*/
+
 #include <Keypad.h>
 
 #include "Arduino.h"
