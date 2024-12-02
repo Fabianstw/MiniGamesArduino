@@ -120,6 +120,9 @@ The students should understand how the \textbf{binary search} algorithm works an
 \subsubsection{Hash Tables}
 The students should understand how \textbf{hash tables} work and be able to use them in their preferred programming language. They should understand why it is efficient for searching and inserting elements and be able to explain why it is more efficient than binary search (in special cases).
 
+\subsection{Short Objectives Summary}
+The students will be able to implement different sorting and searching algorithms and will see cases from real application where those algorithms are used.
+
 \section{Perquisites}
 There are no formal prerequisites for this learning unit. However, it is recommended that students have a basic understanding of the following topics:
 \begin{itemize}
@@ -145,7 +148,12 @@ Using a presentation, the students will get taught how the bubble sort algorithm
 In the laboratory, the students will get a simple problem and should implement a solution using the bubble sort algorithm.
 
 \subsubsection*{Problem for the laboratory}
-To start the course the students will get a simple problem: Given an array of integers, sort the array using the bubble sort algorithm. The array should be sorted in ascending order. \textit{(This is a good start to warm up programming skills of each student.)}
+\begin{tcolorbox}
+  To start the course the students will get a simple problem: Given an array of integers, sort the array using the bubble sort algorithm. The array should be sorted in ascending order. 
+
+  For those who are fast: Given an array of tuples, the first entry is a string and the second entry is an integer. First sort the array by the integer in ascending order, then sort the array by the string in descending order.
+\end{tcolorbox}
+This is a good start to warm up programming skills of each student.
 
 \subsection{Week 2: Selection Sort}
 Using a presentation, the students will get taught how the selection sort algorithm works. They will also get some examples and the \enquote{Pseudocode} of the algorithm. Also, an application example will be shown, quite similar to the problem for the laboratory. 
@@ -157,7 +165,14 @@ Using a presentation, the students will get taught how the selection sort algori
 The problem will should be solved using the selection sort algorithm. The students will get test cases to check if their implementation is correct.
 
 \subsection{Week 3: Merge Sort}
-Todo
+Again using a presentation and the following YouTube video: \href{https://www.youtube.com/watch?v=ZRPoEKHXTJg}{Merge Sort Animations}. The students will get taught how the merge sort algorithm works. They will also get some examples and the \enquote{Pseudocode} of the algorithm.
+
+\subsubsection*{Problem for the laboratory}
+\begin{tcolorbox}
+  You are given an array of integers. Sort the array using the merge sort algorithm. The array should be sorted in ascending order. 
+
+  For those who are fast: Count how many inversions are in the array. An inversion is a pair of indices $(i, j)$ such that $i < j$ and $a[i] > a[j]$.
+\end{tcolorbox}
 
 \subsection{Week 4: Sorting on Presorted Data}
 Todo
@@ -181,6 +196,54 @@ Todo
 Todo
 
 \section{Evaluation}
+\subsection{Outline}
 The main part of the evaluation will be the programming during the laboratory. The students will get a problem and should implement a solution using the algorithms they learned in the theory part. The implementation should be correct and efficient, or at least the students should be able to explain why their implementation is not efficient. 
+
+Above that, the Mini-Tests (in week 5 and 9) will be used to evaluate the understanding of the algorithms. The students should be able to explain how the algorithms work and why they are efficient or not efficient. 
+
+\subsection{Mini-Test Week 5}
+\subsubsection{No. 1 - Bubble Sort}
+You are given the following list of numbers: 
+\begin{align*}
+  [5, 3, 8, 2, 1, 4, 7, 6]
+\end{align*}
+\begin{enumerate}
+  \item Sort the list using the bubble sort algorithm. Write down the list after each iteration.
+  \item What is the time complexity of the bubble sort algorithm?
+  \item Why is the bubble sort algorithm not efficient for large data sets?
+  \item What is the best case time complexity of the bubble sort algorithm?
+\end{enumerate}
+
+\subsubsection{No. 2 - Selection Sort}
+You are given the following list of numbers:
+\begin{align*}
+  [12, 3, 5, 7, 1, 9, 4, 6]
+\end{align*}
+\begin{enumerate}
+  \item Please sort the list using the selection sort algorithm. Write down the list after each iteration.
+  \item Explain the difference between the bubble sort and the selection sort algorithm.  
+\end{enumerate}
+
+\subsubsection{No. 3 - Merge Sort}
+You are given the following list of numbers:
+\begin{align*}
+  [8, 2, 4, 6, 3, 1, 5, 7]
+\end{align*}
+\begin{enumerate}
+  \item Please sort the list using the merge sort algorithm. Write down the list after each iteration.
+  \item What is the time complexity of the merge sort algorithm?
+  \item Why is the merge sort algorithm more efficient than the bubble sort and selection sort algorithm?
+\end{enumerate}
+
+\subsubsection{No. 4 - Sorting on Presorted Data}
+Given will be the following list of numbers, choose the best sorting algorithm for each list and explain why you choose this algorithm.
+\begin{enumerate}
+  \item $[1, 2, 3, 4, 5, 6, 7, 8]$
+  \item $[8, 7, 6, 5, 4, 3, 2, 1]$
+  \item $[8, 2, 4, 6, 3, 1, 5, 7]$
+\end{enumerate}
+
+\subsection{Mini-Test Week 9}
+This will be created during the course.
 
 \end{document}
