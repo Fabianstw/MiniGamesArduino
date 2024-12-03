@@ -2,7 +2,6 @@
 
 #include <Keypad.h>
 
-#include "../Menu/menu.h"
 #include "../pitches.h"
 #include "../utils/utils.h"
 #include "Arduino.h"
@@ -31,16 +30,14 @@ SimonSaysGame::phaseOfGame SimonSaysGame::phase = INSTRUCTIONS;
  */
 SimonSaysGame::SimonSaysGame(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad,
                              int buzzerPin, int redLightPin, int yellowLightPin,
-                             int greenLightPin, int blueLightPin,
-                             GameMenu gameMenu)
+                             int greenLightPin, int blueLightPin)
     : u8g(u8g),
       keypad(keypad),
       buzzerPin(buzzerPin),
       redLightPin(redLightPin),
       yellowLightPin(yellowLightPin),
       greenLightPin(greenLightPin),
-      blueLightPin(blueLightPin),
-      gameMenu(gameMenu) {}
+      blueLightPin(blueLightPin) {}
 
 /**
  * Draws a short introduction to the game.
@@ -70,7 +67,7 @@ void SimonSaysGame::drawWrongAnswer() {
 
   drawCorrectAnswer();
 
-  u8g.drawStr(0, 50, "1 Menu | 2 Again");
+  u8g.drawStr(0, 50, "Any key for for restart");
 }
 
 /**
@@ -203,14 +200,8 @@ void SimonSaysGame::goesToNextLevel(int keyInputCounter) {
 void SimonSaysGame::getWrongMenuKey() {
   char key = keypad.getKey();
   if (key != NO_KEY) {
-    if (key == '1') {
-      phase = INSTRUCTIONS;
-      level = 1;
-      gameMenu.setGameChoice(gameMenu.MENUGAMECHOICE);
-    } else if (key == '2') {
-      phase = SHOWLIGHTSHOW;
-      level = 1;
-    }
+    phase = SHOWLIGHTSHOW;
+    level = 1;
   }
 }
 

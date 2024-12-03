@@ -3,7 +3,6 @@
 
 #include <Keypad.h>
 
-#include "../Menu/menu.h"
 #include "Arduino.h"
 #include "U8glib.h"
 
@@ -12,8 +11,7 @@
  */
 class MainMusic {
  public:
-  MainMusic(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin,
-            GameMenu gamemenu);
+  MainMusic(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin);
   void mainLoopMusic();
 
  private:
@@ -32,7 +30,6 @@ class MainMusic {
 
   U8GLIB_SH1106_128X64 &u8g;
   Keypad &keypad;
-  GameMenu gameMenu;
   int buzzerPin;
   // Define the number of items and the display settings
   const int numOptions = 5;

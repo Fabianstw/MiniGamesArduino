@@ -3,7 +3,6 @@
 
 #include <Keypad.h>
 
-#include "../Menu/menu.h"
 #include "Arduino.h"
 #include "U8glib.h"
 
@@ -11,7 +10,7 @@ class SimonSaysGame {
  public:
   SimonSaysGame(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin,
                 int redLightPin, int yellowLightPin, int greenLightPin,
-                int blueLightPin, GameMenu gameMenu);
+                int blueLightPin);
   void mainLoopSimon();
 
   enum phaseOfGame {
@@ -53,7 +52,6 @@ class SimonSaysGame {
   int yellowLightPin;
   int greenLightPin;
   int blueLightPin;
-  GameMenu gameMenu;
 };
 
 #endif

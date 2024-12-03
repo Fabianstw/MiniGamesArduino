@@ -1,19 +1,87 @@
-#include "main.h"
+/*
+sketch.ino (MiniGames Project)
+
+This file is the main file for the MiniGames project. It contains the setup and
+loop functions for the Arduino. The setup function initializes the pins and
+serial communication. The loop function contains the main game loop that
+determines which game to play based on the user's input.
+
+The MiniGames project contains two games: Tic Tac Toe and Simon Says, also some
+music sound tracks.
+
+@author: Fabian Stiewe
+@data: 10.11.2024
+
+Used libraries:
+- U8glib
+- Keypad
+Those are listed in the libaries folder, but should be installed via the Arduino
+IDE.
+
+*/
 
 #include <Keypad.h>
+#include <U8g2lib.h>
 
-#include "../Menu/menu.h"
-#include "../pitches.h"
-#include "../utils/utils.h"
 #include "Arduino.h"
-#include "TicTacToe.h"
-#include "U8glib.h"
-
+#include "pitches.h"
 using namespace std;
+
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+
+const uint8_t KEYPAD_ROWS = 4;
+const uint8_t KEYPAD_COLS = 4;
+char keys[KEYPAD_ROWS][KEYPAD_COLS] = {{'1', '2', '3', 'A'},
+                                       {'4', '5', '6', 'B'},
+                                       {'7', '8', '9', 'C'},
+                                       {'*', '0', '#', 'D'}};
+byte rowPins[KEYPAD_ROWS] = {5, 4, 3, 2};
+byte colPins[KEYPAD_COLS] = {A3, A2, A1, A0};
+
+Keypad keypad =
+    Keypad(makeKeymap(keys), rowPins, colPins, KEYPAD_ROWS, KEYPAD_COLS);
+
+int buzzerPin = 13;
+int redLightPin = 7;
+int blueLightPin = 8;
+int yellowLightPin = 9;
+int greenLightPin = 12;
+
+/**
+ * Setups the pinModes for each light
+ */
+void setupPinModes() {
+  pinMode(redLightPin, OUTPUT);
+  pinMode(yellowLightPin, OUTPUT);
+  pinMode(greenLightPin, OUTPUT);
+  pinMode(blueLightPin, OUTPUT);
+}
+
+void setup(void) {
+  u8g.begin();
+  setupPinModes();
+  initializeBoard();
+}
+
+/**
+ * #####################################################################
+ *
+ * Paste all game code below here
+ *
+ * #####################################################################
+ */
 
 /*
 For different sound effects, we can use the following melodies:
 */
+typedef enum {
+  MENU,
+  STANDING_X,
+  STANDING_O,
+  DRAW,
+  GAMEPVSP,
+} GameStatus;
+
 int startingGame[] = {NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4,
                       NOTE_E4, NOTE_G4, NOTE_C5, NOTE_E5};
 int startingGameNoteDurations[] = {1, 3, 2, 4, 4, 4, 4, 4};
@@ -36,7 +104,7 @@ int drawMelodySize = 4;
 bool playWinDrawMelody = true;
 
 // random choose of the start player
-int player = randInt(0, 2);
+int player = 1;
 int player1Wins = 0;
 int player2Wins = 0;
 int moveCoutner = 0;
@@ -55,42 +123,34 @@ int counterLastMove = 0;
 int counterBoardDrawnFinal = 0;
 
 /**
- * Constructor for the TicTacToeGame class
- * @param buzzerPin The pin number for the buzzer
- * @param redLightPin The pin number for the red light
- * @param yellowLightPin The pin number for the yellow light
- * @param greenLightPin The pin number for the green light
- * @param u8g The U8GLIB_SSD1306_128X64 object for the OLED display
- * @param keypad The Keypad object
+ * Checks if either X or O has won the game and returns the winner
+ * @param board The current ttt board
  */
-TicTacToeGame::TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin,
-                             int greenLightPin, U8GLIB_SH1106_128X64 u8g,
-                             Keypad &keypad, GameMenu gameMenu)
-    : buzzerPin(buzzerPin),
-      redLightPin(redLightPin),
-      yellowLightPin(yellowLightPin),
-      greenLightPin(greenLightPin),
-      u8g(u8g),
-      keypad(keypad),
-      gameMenu(gameMenu) {
-  if (!setupGame) {
-    setupTicTacToe();
-    setupGame = true;
+char checkWinnerTic(char board[3][3][2]) {
+  for (int i = 0; i < 3; i++) {
+    // check rows and columns
+    if (board[i][0][0] == board[i][1][0] && board[i][1][0] == board[i][2][0]) {
+      return board[i][0][0];
+    }
+    if (board[0][i][0] == board[1][i][0] && board[1][i][0] == board[2][i][0]) {
+      return board[0][i][0];
+    }
   }
-}
-
-/**
- * Function to setup the TicTacToe game
- */
-void TicTacToeGame::setupTicTacToe() {
-  initializeBoard();
-  // playMusic(startingGame, startingGameNoteDurations, startingGameSize);
+  // check diagonals
+  if (board[0][0][0] == board[1][1][0] && board[1][1][0] == board[2][2][0]) {
+    return board[0][0][0];
+  }
+  // check other diagonal
+  if (board[0][2][0] == board[1][1][0] && board[1][1][0] == board[2][0][0]) {
+    return board[0][2][0];
+  }
+  return ' ';
 }
 
 /**
  * Play music function for given melody and note durations
  */
-void TicTacToeGame::playMusic(int *melody, int *noteDurations, int length) {
+void playMusic(int *melody, int *noteDurations, int length) {
   for (int thisNote = 0; thisNote < length; thisNote++) {
     int noteDuration = 1000 / noteDurations[thisNote];
     tone(buzzerPin, melody[thisNote], noteDuration);
@@ -105,7 +165,7 @@ void TicTacToeGame::playMusic(int *melody, int *noteDurations, int length) {
 /**
  * Function to initialize the board
  */
-void TicTacToeGame::initializeBoard() {
+void initializeBoard() {
   strcpy(board[0][0], " ");
   strcpy(board[0][1], " ");
   strcpy(board[0][2], " ");
@@ -122,8 +182,7 @@ void TicTacToeGame::initializeBoard() {
 /**
  * Function to draw the board on the OLED display
  */
-void TicTacToeGame::drawBoard() {
-  u8g.setFont(u8g_font_tpss);
+void drawBoard() {
   u8g.drawStr(0, 10, board[0][0]);
   u8g.drawStr(10, 10, "|");
   u8g.drawStr(20, 10, board[0][1]);
@@ -158,7 +217,7 @@ void TicTacToeGame::drawBoard() {
 /**
  * Function to draw the player's turn on the OLED display
  */
-void TicTacToeGame::drawPlayersTurn() {
+void drawPlayersTurn() {
   if (player == 0) {
     u8g.drawStr(9, 62, "P1: X");
   } else {
@@ -170,7 +229,7 @@ void TicTacToeGame::drawPlayersTurn() {
  * Function to draw the game standings on the OLED display
  * P1: x   P2: y
  */
-void TicTacToeGame::drawGameStandings() {
+void drawGameStandings() {
   u8g.drawStr(60, 10, "Points:");
   u8g.drawStr(60, 22, "P1: ");
   u8g.drawStr(80, 22, String(player1Wins).c_str());
@@ -181,7 +240,7 @@ void TicTacToeGame::drawGameStandings() {
 /**
  * Function to draw the game status on the OLED display
  */
-void TicTacToeGame::drawGameStatus() {
+void drawGameStatus() {
   if (gameStatus == STANDING_O) {
     u8g.drawStr(60, 62, "Player O wins!");
   } else if (gameStatus == STANDING_X) {
@@ -193,12 +252,8 @@ void TicTacToeGame::drawGameStatus() {
 
 /**
  * Function to draw the main display on the OLED
- * - Board
- * - Player's turn
- * - Game standings
- * - Game status
  */
-void TicTacToeGame::drawMainDisplay(void) {
+void drawMainDisplay(void) {
   drawBoard();
   drawPlayersTurn();
   drawGameStandings();
@@ -207,23 +262,18 @@ void TicTacToeGame::drawMainDisplay(void) {
 
 /**
  * Function to draw the menu on the OLED display
- * - Player vs Player
- * - Player vs AI
- * - Back to menu
  */
-void TicTacToeGame::drawMenu(void) {
+void drawMenu(void) {
   u8g.drawStr(0, 10, "Tic Tac Toe");
   u8g.drawStr(0, 20, "1: P vs P");
   u8g.drawStr(0, 30, "2: P vs AI");
-
-  u8g.drawStr(0, 50, "3: Back to menu");
 }
 
 /**
  * Function to reset the lights
  * (red, yellow, green are turned off)
  */
-void TicTacToeGame::resetLights() {
+void resetLights() {
   digitalWrite(redLightPin, LOW);
   digitalWrite(yellowLightPin, LOW);
   digitalWrite(greenLightPin, LOW);
@@ -234,7 +284,7 @@ void TicTacToeGame::resetLights() {
  * Calculates the row and col and updates the board
  * (if its a valid move)
  */
-void TicTacToeGame::getUserInputGame() {
+void getUserInputGame() {
   char key = keypad.getKey();
   if (key >= '1' && key <= '9') {
     int position = key - '1';
@@ -254,7 +304,7 @@ void TicTacToeGame::getUserInputGame() {
  * @param row The row number of the board
  * @param col The column number of the board
  */
-void TicTacToeGame::updateBoard(int row, int col) {
+void updateBoard(int row, int col) {
   if (player == 0) {
     strcpy(board[row][col], "X");
     player = 1;
@@ -267,7 +317,7 @@ void TicTacToeGame::updateBoard(int row, int col) {
 /**
  * Function to play the sound of the player's move
  */
-void TicTacToeGame::playPlayerMoveSound() {
+void playPlayerMoveSound() {
   if (player == 0) {
     tone(buzzerPin, player0MoveNote, player0MoveNoteDuration);
   } else {
@@ -277,42 +327,14 @@ void TicTacToeGame::playPlayerMoveSound() {
 
 /**
  * Gets the user input for the menu
- * - Player vs Player
- * - Player vs AI
- * - Back to menu
  */
-void TicTacToeGame::getUserInputMenu() {
+void getUserInputMenu() {
   char key = keypad.getKey();
   if (key == '1') {
     gameStatus = GAMEPVSP;
     initializeBoard();
     return;
   }
-  if (key == '2') {
-    gameStatus = GAMEPVSAI;
-    initializeBoard();
-    return;
-  }
-  if (key == '3') {
-    gameStatus = MENU;
-    gameMenu.setGameChoice(gameMenu.MENUGAMECHOICE);
-    return;
-  }
-}
-
-/**
- * Gets the AI input, places it on the board
- */
-void TicTacToeGame::getAIInput() {
-  int position = getBetterAIMove(moveCoutner, board);
-  // AI only returns valid moves
-  int row = position / 3;
-  int col = position % 3;
-  strcpy(board[row][col], "O");
-  moveCoutner++;
-  player = 0;
-  counterLastMove = 0;
-  playPlayerMoveSound();
 }
 
 /**
@@ -321,7 +343,7 @@ void TicTacToeGame::getAIInput() {
  * Any key press will get him back to the
  * tic tac toe menu
  */
-void TicTacToeGame::getUserInputStanding() {
+void getUserInputStanding() {
   char key = keypad.getKey();
   if (key != NO_KEY) {
     resetGame();
@@ -333,11 +355,11 @@ void TicTacToeGame::getUserInputStanding() {
  * Resets the game, so a new round can be played
  * Standnings are obviously kept
  */
-void TicTacToeGame::resetGame() {
+void resetGame() {
   gameStatus = MENU;
   initializeBoard();
   moveCoutner = 0;
-  player = randInt(0, 2);
+  player = 1 - player;
   playWinDrawMelody = true;
   counterBoardDrawnFinal = 0;
   counterLastMove = 0;
@@ -347,7 +369,7 @@ void TicTacToeGame::resetGame() {
 /**
  * Plays music if the game has ended
  */
-void TicTacToeGame::playGameEndMusic() {
+void playGameEndMusic() {
   if (gameStatus == STANDING_O) {
     if (playWinDrawMelody) {
       digitalWrite(redLightPin, HIGH);
@@ -370,7 +392,7 @@ void TicTacToeGame::playGameEndMusic() {
 /**
  * Checks if one player has won
  */
-void TicTacToeGame::checkForWinner() {
+void checkForWinner() {
   if (checkWinnerTic(board) != ' ') {
     if (checkWinnerTic(board) == 'X') {
       gameStatus = STANDING_X;
@@ -386,7 +408,7 @@ void TicTacToeGame::checkForWinner() {
  * Checks if the game is a draw
  * (all the cells are filled) and no one has won
  */
-void TicTacToeGame::checkForDraw() {
+void checkForDraw() {
   if (moveCoutner == 9 && gameStatus != STANDING_X &&
       gameStatus != STANDING_O) {
     gameStatus = DRAW;
@@ -397,7 +419,7 @@ void TicTacToeGame::checkForDraw() {
  * Checks if one player has won
  * or if the game is a draw
  */
-void TicTacToeGame::checkForGameEnding() {
+void checkForGameEnding() {
   checkForWinner();
   checkForDraw();
 }
@@ -406,7 +428,7 @@ void TicTacToeGame::checkForGameEnding() {
  * Loop for the end of the game
  * Show the standings, lights a led and plays music
  */
-void TicTacToeGame::loopEnd() {
+void loopEnd() {
   drawMainDisplay();
   boardDrawn = true;
   getUserInputStanding();
@@ -417,41 +439,29 @@ void TicTacToeGame::loopEnd() {
   counterBoardDrawnFinal++;
 }
 
-void TicTacToeGame::loopGame() {
+void loopGame() {
   drawMainDisplay();
   boardDrawn = !boardDrawn;  // Set the flag after drawing the board
   checkForGameEnding();
-  if (gameStatus == GAMEPVSP) {
-    getUserInputGame();
-  } else if (gameStatus == GAMEPVSAI) {
-    if (player == 0) {
-      getUserInputGame();
-    } else {
-      if (counterLastMove > 50) {
-        getAIInput();
-        counterLastMove = 0;
-      }
-      counterLastMove++;
-    }
-  }
+  getUserInputGame();
   boardDrawn = true;  // Set the flag after drawing the board
 }
 
 /**
  * Loop for the tictactoe menu
  */
-void TicTacToeGame::loopMenu() {
+void loopMenu() {
   drawMenu();
   getUserInputMenu();
 }
 
-void TicTacToeGame::mainLoopTic() {
+void mainLoopTic() {
   u8g.firstPage();
   do {
-    u8g.setFont(u8g_font_tpss);
+    u8g.setFont(u8g2_font_u8glib_4_hr);
     if (gameStatus == MENU) {
       loopMenu();
-    } else if (gameStatus == GAMEPVSP || gameStatus == GAMEPVSAI) {
+    } else if (gameStatus == GAMEPVSP) {
       loopGame();
     } else if (gameStatus == STANDING_X || gameStatus == STANDING_O ||
                gameStatus == DRAW) {
@@ -459,3 +469,13 @@ void TicTacToeGame::mainLoopTic() {
     }
   } while (u8g.nextPage());
 }
+
+/**
+ * #####################################################################
+ *
+ * Call the game loop here
+ *
+ * #####################################################################
+ */
+
+void loop(void) { mainLoopTic(); }

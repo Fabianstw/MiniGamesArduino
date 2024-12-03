@@ -2,21 +2,18 @@
 
 #include <Keypad.h>
 
-#include "../Menu/menu.h"
 #include "../pitches.h"
 #include "../utils/utils.h"
 #include "Arduino.h"
 #include "U8glib.h"
 #include "songs.h"
 
-MainMusic::MainMusic(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin,
-                     GameMenu gameMenu)
-    : u8g(u8g), keypad(keypad), buzzerPin(buzzerPin), gameMenu(gameMenu) {
-  options[0] = "Menu";
-  options[1] = "Star Wars";
-  options[2] = "Mario";
-  options[3] = "Tetris Long";
-  options[4] = "Alle meine Entchen";
+MainMusic::MainMusic(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin)
+    : u8g(u8g), keypad(keypad), buzzerPin(buzzerPin) {
+  options[0] = "Star Wars";
+  options[1] = "Mario";
+  options[2] = "Tetris Long";
+  options[3] = "Alle meine Entchen";
 }
 
 /**
@@ -84,13 +81,6 @@ void MainMusic::getScrollInput() {
   if (key != NO_KEY) {
     switch (key) {
       case '0':
-        if (scrollOffset == 0) {
-          gameMenu.setGameChoice(GameMenu::MENUGAMECHOICE);
-        } else {
-          choosenSong = scrollOffset;
-          musicPhase = MUSICPLAY;
-        }
-        break;
       case '1':
       case '2':
       case '3':
