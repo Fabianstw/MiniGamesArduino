@@ -1,57 +1,103 @@
-#include "SSmain.h"
+/*
+sketch.ino (MiniGames Project)
+
+This file is the main file for the MiniGames project. It contains the setup and
+loop functions for the Arduino. The setup function initializes the pins and
+serial communication. The loop function contains the main game loop that
+determines which game to play based on the user's input.
+
+The MiniGames project contains two games: Tic Tac Toe and Simon Says, also some
+music sound tracks.
+
+@author: Fabian Stiewe
+@data: 10.11.2024
+
+Used libraries:
+- U8glib
+- Keypad
+Those are listed in the libaries folder, but should be installed via the Arduino
+IDE.
+
+*/
 
 #include <Keypad.h>
+#include <U8g2lib.h>
 
-#include "../pitches.h"
-#include "../utils/utils.h"
 #include "Arduino.h"
-#include "U8glib.h"
+#include "pitches.h"
+using namespace std;
+
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+
+const uint8_t KEYPAD_ROWS = 4;
+const uint8_t KEYPAD_COLS = 4;
+char keys[KEYPAD_ROWS][KEYPAD_COLS] = {{'1', '2', '3', 'A'},
+                                       {'4', '5', '6', 'B'},
+                                       {'7', '8', '9', 'C'},
+                                       {'*', '0', '#', 'D'}};
+byte rowPins[KEYPAD_ROWS] = {5, 4, 3, 2};
+byte colPins[KEYPAD_COLS] = {A3, A2, A1, A0};
+
+Keypad keypad =
+    Keypad(makeKeymap(keys), rowPins, colPins, KEYPAD_ROWS, KEYPAD_COLS);
+
+int buzzerPin = 13;
+int redLightPin = 7;
+int blueLightPin = 8;
+int yellowLightPin = 9;
+int greenLightPin = 12;
+
+/**
+ * Setups the pinModes for each light
+ */
+void setupPinModes() {
+  pinMode(redLightPin, OUTPUT);
+  pinMode(yellowLightPin, OUTPUT);
+  pinMode(greenLightPin, OUTPUT);
+  pinMode(blueLightPin, OUTPUT);
+}
+
+void setup(void) {
+  u8g.begin();
+  randomSeed(analogRead(11));
+  setupPinModes();
+}
+
+/**
+ * #####################################################################
+ *
+ * Paste all game code below here
+ *
+ * #####################################################################
+ */
 
 int level = 1;
-char lightSequence[100] = {};
+char lightSequence[15] = {};
 
 int counterShowLightShow = 0;
 int counterAskForUserInput = 0;
 int counterShowCorrect = 0;
 
-SimonSaysGame::phaseOfGame SimonSaysGame::phase = INSTRUCTIONS;
-
-/**
- * Constructor for the SimonSaysGame class.
- * @param u8g The U8GLIB object for the OLED display.
- * @param keypad The Keypad object for the input.
- * @param buzzerPin The pin number for the buzzer.
- * @param redLightPin The pin number for the red light.
- * @param yellowLightPin The pin number for the yellow light.
- * @param greenLightPin The pin number for the green light.
- * @param blueLightPin The pin number for the blue light.
- * @param gameMenu The GameMenu object for the game menu,
- *                  to reset the current gamechoice.
- */
-SimonSaysGame::SimonSaysGame(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad,
-                             int buzzerPin, int redLightPin, int yellowLightPin,
-                             int greenLightPin, int blueLightPin)
-    : u8g(u8g),
-      keypad(keypad),
-      buzzerPin(buzzerPin),
-      redLightPin(redLightPin),
-      yellowLightPin(yellowLightPin),
-      greenLightPin(greenLightPin),
-      blueLightPin(blueLightPin) {}
+enum phaseOfGame {
+  INSTRUCTIONS,
+  SHOWLIGHTSHOW,
+  USERINPUT,
+  WRONGINPUT,
+  CORRECT
+};
+phaseOfGame phase = INSTRUCTIONS;
 
 /**
  * Draws a short introduction to the game.
  */
-void SimonSaysGame::drawInstructions() {
-  u8g.setFont(u8g_font_tpss);
+void drawInstructions() {
   u8g.drawStr(0, 10, "Simon Says");
-  u8g.drawStr(0, 20, "Repeat the sequence");
-  u8g.drawStr(0, 30, "of lights and sounds");
-  u8g.drawStr(0, 40, "Press any key to start");
+  u8g.drawStr(0, 20, "Repeat");
+  u8g.drawStr(0, 40, "Press any to start");
 }
 
-void SimonSaysGame::drawCorrectAnswer() {
-  u8g.drawStr(0, 30, "Correct answer:");
+void drawCorrectAnswer() {
+  u8g.drawStr(0, 30, "Correct:");
   for (int i = 0; i < level; i++) {
     u8g.drawStr(0 + i * 10, 40, String(lightSequence[i]).c_str());
   }
@@ -60,28 +106,22 @@ void SimonSaysGame::drawCorrectAnswer() {
 /**
  * Draws, that is was wrong and the correct answer
  */
-void SimonSaysGame::drawWrongAnswer() {
-  u8g.setFont(u8g_font_tpss);
+void drawWrongAnswer() {
   u8g.drawStr(0, 10, "Simon Says:");
-  u8g.drawStr(0, 20, "that was not good!");
-
+  u8g.drawStr(0, 20, "Bad!");
   drawCorrectAnswer();
-
-  u8g.drawStr(0, 50, "Any key for for restart");
+  u8g.drawStr(0, 50, "Any to restart");
 }
 
 /**
  * Draws the instructions for the user to repeat the sequence.
  */
-void SimonSaysGame::drawInstructionsForInput() {
-  u8g.setFont(u8g_font_tpss);
-  u8g.drawStr(20, 30, "Please repeat");
-}
+void drawInstructionsForInput() { u8g.drawStr(20, 30, "Repeat"); }
 
 /**
  * Gets the key input from the user to start the game.
  */
-void SimonSaysGame::getInstructionsKey() {
+void getInstructionsKey() {
   char key = keypad.getKey();
   if (key != NO_KEY) {
     phase = SHOWLIGHTSHOW;
@@ -92,7 +132,7 @@ void SimonSaysGame::getInstructionsKey() {
  * Shows the corresponding light and plays a sound for a given light ID.
  * @param lightID The ID of the light to show.
  */
-void SimonSaysGame::showCorrespondingLightAndPlaySound(int lightID) {
+void showCorrespondingLightAndPlaySound(int lightID) {
   switch (lightID) {
     case 0:
       digitalWrite(greenLightPin, HIGH);
@@ -121,7 +161,7 @@ void SimonSaysGame::showCorrespondingLightAndPlaySound(int lightID) {
 /**
  * Resets all lights to LOW.
  */
-void SimonSaysGame::resetLights() {
+void resetLights() {
   digitalWrite(redLightPin, LOW);
   digitalWrite(yellowLightPin, LOW);
   digitalWrite(greenLightPin, LOW);
@@ -131,9 +171,9 @@ void SimonSaysGame::resetLights() {
 /**
  * Displays the light show for the user to repeat.
  */
-void SimonSaysGame::displayLightShow() {
+void displayLightShow() {
   for (int i = 0; i < level; i++) {
-    int randomLight = randInt(0, 3);
+    int randomLight = random(0, 4);
     lightSequence[i] = randomLight;
     showCorrespondingLightAndPlaySound(randomLight);
   }
@@ -143,16 +183,13 @@ void SimonSaysGame::displayLightShow() {
 /**
  * Shows a short text on the screen to watch the lights.
  */
-void SimonSaysGame::screenLightShow() {
-  u8g.setFont(u8g_font_tpss);
-  u8g.drawStr(20, 30, "Watch the lights!!!");
-}
+void screenLightShow() { u8g.drawStr(20, 30, "Watch!"); }
 
 /**
  * Gets the user input for the light IDs.
  * Compares each input with the corresponding light in the sequence.
  */
-void SimonSaysGame::getUserInputLightIDs() {
+void getUserInputLightIDs() {
   int keyInputCounter = 0;
   while (keyInputCounter < level && phase == USERINPUT) {
     char key = keypad.getKey();
@@ -168,8 +205,7 @@ void SimonSaysGame::getUserInputLightIDs() {
  * @param key The key input from the user.
  * @param keyInputCounter the index (which current light to compare)
  */
-void SimonSaysGame::comparesUserinputWithSequence(char key,
-                                                  int &keyInputCounter) {
+void comparesUserinputWithSequence(char key, int &keyInputCounter) {
   if (key >= '0' && key <= '3') {
     if (lightSequence[keyInputCounter] == key - '0') {
       showCorrespondingLightAndPlaySound(key - '0');
@@ -185,7 +221,7 @@ void SimonSaysGame::comparesUserinputWithSequence(char key,
  * Otherwise sets phase to WRONGINPUT.
  * @param keyInputCounter The counter for the user input.
  */
-void SimonSaysGame::goesToNextLevel(int keyInputCounter) {
+void goesToNextLevel(int keyInputCounter) {
   if (keyInputCounter == level) {
     level++;
     phase = CORRECT;
@@ -197,7 +233,7 @@ void SimonSaysGame::goesToNextLevel(int keyInputCounter) {
 /**
  * Gets the key input from the user to go to the menu or play again.
  */
-void SimonSaysGame::getWrongMenuKey() {
+void getWrongMenuKey() {
   char key = keypad.getKey();
   if (key != NO_KEY) {
     phase = SHOWLIGHTSHOW;
@@ -208,7 +244,7 @@ void SimonSaysGame::getWrongMenuKey() {
 /**
  * Shows the instructions and asks for the user input.
  */
-void SimonSaysGame::loopPhaseInstructions() {
+void loopPhaseInstructions() {
   drawInstructions();
   getInstructionsKey();
 }
@@ -216,9 +252,9 @@ void SimonSaysGame::loopPhaseInstructions() {
 /**
  * Shows the light show and displays to watch on the screen.
  */
-void SimonSaysGame::loopPhaseShowLightShow() {
+void loopPhaseShowLightShow() {
   screenLightShow();
-  if (counterShowLightShow >= 350) {
+  if (counterShowLightShow >= 100) {
     displayLightShow();
     counterShowLightShow = 0;
   }
@@ -229,7 +265,7 @@ void SimonSaysGame::loopPhaseShowLightShow() {
  * Shows the instructions for the user input.
  * Should repeat the sequence of lights.
  */
-void SimonSaysGame::loopPhaseUserinput() {
+void loopPhaseUserinput() {
   drawInstructionsForInput();
   if (counterAskForUserInput >= 40) {
     getUserInputLightIDs();
@@ -242,7 +278,7 @@ void SimonSaysGame::loopPhaseUserinput() {
  * Shows the input was wrong, the correct answer and aks
  * for the user to go to the menu or play again.
  */
-void SimonSaysGame::loopPhaseWronginput() {
+void loopPhaseWronginput() {
   drawWrongAnswer();
   getWrongMenuKey();
 }
@@ -250,9 +286,9 @@ void SimonSaysGame::loopPhaseWronginput() {
 /**
  * Shortly shows the input by the user has been correct.
  */
-void SimonSaysGame::loopPhaseCorrect() {
+void loopPhaseCorrect() {
   u8g.drawStr(0, 30, "Correct!");
-  if (counterShowCorrect > 350) {
+  if (counterShowCorrect > 35) {
     phase = SHOWLIGHTSHOW;
     counterShowCorrect = 0;
   }
@@ -263,9 +299,10 @@ void SimonSaysGame::loopPhaseCorrect() {
  * The main loop for the Simon Says game.
  * Displays the instructions, light show, user input, and wrong input.
  */
-void SimonSaysGame::mainLoopSimon() {
+void mainLoopSimon() {
   u8g.firstPage();
   do {
+    u8g.setFont(u8g2_font_6x13_tf);
     if (phase == INSTRUCTIONS) {
       loopPhaseInstructions();
     } else if (phase == SHOWLIGHTSHOW) {
@@ -279,3 +316,13 @@ void SimonSaysGame::mainLoopSimon() {
     }
   } while (u8g.nextPage());
 }
+
+/**
+ * #####################################################################
+ *
+ * Call the game loop here
+ *
+ * #####################################################################
+ */
+
+void loop(void) { mainLoopSimon(); }
