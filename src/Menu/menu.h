@@ -2,9 +2,9 @@
 #define GAMEMENU_H
 
 #include <Keypad.h>
-#include <U8glib.h>
 
 #include "Arduino.h"
+#include "U8glib.h"
 
 /**
  * Structure of the class for the game menu
@@ -13,7 +13,7 @@
  */
 class GameMenu {
  public:
-  GameMenu(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad);
+  GameMenu(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad);
 
   enum currentGameChoice { MENUGAMECHOICE, TICTACTOE, SIMONSAYS, MUSIC };
 
@@ -22,7 +22,7 @@ class GameMenu {
   void mainLoopMenu();
   void setGameChoice(currentGameChoice choice);
 
-  U8GLIB_SSD1306_128X64 &u8g;
+  U8GLIB_SH1106_128X64 &u8g;
   Keypad &keypad;
 
   static currentGameChoice gameCH;

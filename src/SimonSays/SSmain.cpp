@@ -3,10 +3,10 @@
 #include <Keypad.h>
 
 #include "../Menu/menu.h"
+#include "../pitches.h"
 #include "../utils/utils.h"
 #include "Arduino.h"
 #include "U8glib.h"
-#include "pitches.h"
 
 int level = 1;
 char lightSequence[100] = {};
@@ -29,7 +29,7 @@ SimonSaysGame::phaseOfGame SimonSaysGame::phase = INSTRUCTIONS;
  * @param gameMenu The GameMenu object for the game menu,
  *                  to reset the current gamechoice.
  */
-SimonSaysGame::SimonSaysGame(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad,
+SimonSaysGame::SimonSaysGame(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad,
                              int buzzerPin, int redLightPin, int yellowLightPin,
                              int greenLightPin, int blueLightPin,
                              GameMenu gameMenu)

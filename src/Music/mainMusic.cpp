@@ -3,13 +3,13 @@
 #include <Keypad.h>
 
 #include "../Menu/menu.h"
+#include "../pitches.h"
 #include "../utils/utils.h"
 #include "Arduino.h"
 #include "U8glib.h"
-#include "pitches.h"
 #include "songs.h"
 
-MainMusic::MainMusic(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad, int buzzerPin,
+MainMusic::MainMusic(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin,
                      GameMenu gameMenu)
     : u8g(u8g), keypad(keypad), buzzerPin(buzzerPin), gameMenu(gameMenu) {
   options[0] = "Menu";

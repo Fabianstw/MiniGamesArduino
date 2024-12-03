@@ -2,17 +2,17 @@
 #define MAINMUSIC_H
 
 #include <Keypad.h>
-#include <U8glib.h>
 
 #include "../Menu/menu.h"
 #include "Arduino.h"
+#include "U8glib.h"
 
 /**
  * Structure of the class for them usic
  */
 class MainMusic {
  public:
-  MainMusic(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad, int buzzerPin,
+  MainMusic(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin,
             GameMenu gamemenu);
   void mainLoopMusic();
 
@@ -30,7 +30,7 @@ class MainMusic {
   enum MUSICPHASE { MUSICCHOICE, MUSICPLAY };
   MUSICPHASE musicPhase = MUSICCHOICE;
 
-  U8GLIB_SSD1306_128X64 &u8g;
+  U8GLIB_SH1106_128X64 &u8g;
   Keypad &keypad;
   GameMenu gameMenu;
   int buzzerPin;

@@ -23,15 +23,21 @@ IDE.
 #include <Keypad.h>
 
 #include "Arduino.h"
+// #include "Menu/menu.cpp"
 #include "Menu/menu.h"
+// #include "Music/mainMusic.cpp"
 #include "Music/mainMusic.h"
+// #include "SimonSays/SSmain.cpp"
 #include "SimonSays/SSmain.h"
+// #include "TicTacToe/TicTacToe.cpp"
+#include "TicTacToe/TicTacToe.h"
+// #include "TicTacToe/main.cpp"
 #include "TicTacToe/main.h"
 #include "U8glib.h"
+// #include "utils/utils.cpp"
 #include "utils/utils.h"
 
-U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_DEV_0 | U8G_I2C_OPT_NO_ACK |
-                          U8G_I2C_OPT_FAST);
+U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE);
 
 const uint8_t KEYPAD_ROWS = 4;
 const uint8_t KEYPAD_COLS = 4;
@@ -69,7 +75,7 @@ void setupPinModes() {
   pinMode(blueLightPin, OUTPUT);
 }
 
-void setup() {
+void setup(void) {
   initRandomSeed();
   setupPinModes();
 
@@ -79,7 +85,7 @@ void setup() {
   Serial.begin(9600);
 }
 
-void loop() {
+void loop(void) {
   if (gameMenu.getGameChoice() == GameMenu::MENUGAMECHOICE) {
     gameMenu.mainLoopMenu();
   } else if (gameMenu.getGameChoice() == GameMenu::TICTACTOE) {

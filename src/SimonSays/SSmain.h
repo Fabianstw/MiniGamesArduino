@@ -2,14 +2,14 @@
 #define SIMONSAYSGAME_H
 
 #include <Keypad.h>
-#include <U8glib.h>
 
 #include "../Menu/menu.h"
 #include "Arduino.h"
+#include "U8glib.h"
 
 class SimonSaysGame {
  public:
-  SimonSaysGame(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad, int buzzerPin,
+  SimonSaysGame(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad, int buzzerPin,
                 int redLightPin, int yellowLightPin, int greenLightPin,
                 int blueLightPin, GameMenu gameMenu);
   void mainLoopSimon();
@@ -46,7 +46,7 @@ class SimonSaysGame {
 
   static phaseOfGame phase;
 
-  U8GLIB_SSD1306_128X64 &u8g;
+  U8GLIB_SH1106_128X64 &u8g;
   Keypad &keypad;
   int buzzerPin;
   int redLightPin;

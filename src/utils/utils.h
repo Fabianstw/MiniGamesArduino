@@ -9,9 +9,10 @@
 #ifndef RANDOM_HELPER_H
 #define RANDOM_HELPER_H
 
-#include <cstdlib>
-#include <ctime>
+#include <stdlib.h>
+#include <time.h>
 
+#include "Arduino.h"
 void initRandomSeed();
 int randInt(int min, int max);
 

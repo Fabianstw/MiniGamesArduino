@@ -1,17 +1,14 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <ArduinoSTL.h>
 #include <Keypad.h>
 
-#include <array>
-
 #include "../Menu/menu.h"
+#include "../pitches.h"
 #include "../utils/utils.h"
 #include "Arduino.h"
 #include "TicTacToe.h"
 #include "U8glib.h"
-#include "pitches.h"
 
 using namespace std;
 
@@ -58,7 +55,7 @@ extern bool boardDrawn;
 class TicTacToeGame {
  public:
   TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin,
-                int greenLightPin, U8GLIB_SSD1306_128X64 u8g, Keypad &keypad,
+                int greenLightPin, U8GLIB_SH1106_128X64 u8g, Keypad &keypad,
                 GameMenu gameMenu);
 
   void mainLoopTic();
@@ -68,7 +65,7 @@ class TicTacToeGame {
   int redLightPin;
   int yellowLightPin;
   int greenLightPin;
-  U8GLIB_SSD1306_128X64 u8g;
+  U8GLIB_SH1106_128X64 u8g;
   Keypad &keypad;
   GameMenu gameMenu;
 

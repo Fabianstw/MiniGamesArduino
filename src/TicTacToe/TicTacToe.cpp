@@ -1,8 +1,6 @@
 #include "TicTacToe.h"
 
-#include <iostream>
-#include <utility>
-#include <vector>
+#include <Arduino.h>
 
 #include "../utils/utils.h"
 
@@ -51,9 +49,7 @@ int getBetterAIMove(int moveCounter, char board[3][3][2]) {
     return 4;
   }
 
-  // Secound move:
-  // If the middle is free, take it
-  // If not, take a top left corner TODO: change to random corner
+  // Second move: If the middle is free, take it; otherwise, take a corner
   if (moveCounter == 1) {
     if (board[1][1][0] == ' ') {
       return 4;
@@ -62,51 +58,45 @@ int getBetterAIMove(int moveCounter, char board[3][3][2]) {
     }
   }
 
-  // try to place in one of the corners
+  // Try to place in one of the corners
   if (moveCounter == 2) {
-    if (board[0][0][0] == ' ') {
-      return 0;
-    }
-    if (board[0][2][0] == ' ') {
-      return 2;
-    }
-    if (board[2][0][0] == ' ') {
-      return 6;
-    }
-    if (board[2][2][0] == ' ') {
-      return 8;
-    }
+    if (board[0][0][0] == ' ') return 0;
+    if (board[0][2][0] == ' ') return 2;
+    if (board[2][0][0] == ' ') return 6;
+    if (board[2][2][0] == ' ') return 8;
   }
 
-  // check if AI can win in one move
+  // Check if AI can win in one move
   int winMove = checkPossibleOneMoveWin(board, 'O');
   if (winMove != -1) {
     return winMove;
   }
 
-  // check if player can win in one move
-  // if yes, block the player
+  // Check if the player can win in one move and block them
   winMove = checkPossibleOneMoveWin(board, 'X');
   if (winMove != -1) {
     return winMove;
   }
 
-  pair<int, int> answer = getAIinputMinMax(moveCounter, board, false);
-  if (0 <= answer.second && answer.second <= 8) {
-    return answer.second;
-  }
+  // Replace std::vector with a fixed-size array
+  int possibleMoves[9];
+  int moveCount = 0;
 
-  // get all possible moves
-  vector<int> possibleMoves;
+  // Collect all possible moves
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       if (board[i][j][0] == ' ') {
-        possibleMoves.push_back(i * 3 + j);
+        possibleMoves[moveCount++] = i * 3 + j;
       }
     }
   }
-  // choose a random move
-  return possibleMoves[randInt(0, possibleMoves.size() - 1)];
+
+  // Choose a random move
+  if (moveCount > 0) {
+    return possibleMoves[randInt(0, moveCount - 1)];
+  }
+
+  return -1;  // No valid moves
 }
 
 /**
@@ -184,52 +174,65 @@ int checkPossibleOneMoveWin(char board_copy[3][3][2], char player) {
  * @param player_here who's turn it is
  *
  */
-pair<int, int> getAIinputMinMax(int round, char board_copy[3][3][2],
-                                bool player_here) {
-  // Calculate all possible games till the end
-  // win is 1, draw is 0, lose is -1
+Pair getAIinputMinMaxHelper(int round, char board_copy[3][3][2],
+                            bool player_here) {
+  // If the board is full, it's a draw
   if (round == 9) {
-    return make_pair(0, -1);  // Draw if no winner and board is full
+    return {0, -1};
   }
-  // Get all free fields
-  vector<int> free_fields;
+
+  // Collect all free fields
+  int free_fields[9];
+  int fieldCount = 0;
+
   for (int i = 0; i < 9; i++) {
     if (board_copy[i / 3][i % 3][0] == ' ') {
-      free_fields.push_back(i);
+      free_fields[fieldCount++] = i;
     }
   }
+
   // Save all the results
-  vector<int> results;
-  for (int free_field : free_fields) {
+  int results[9];
+  int resultCount = 0;
+
+  for (int i = 0; i < fieldCount; i++) {
+    int free_field = free_fields[i];
     char board_copy_move[3][3][2];
+
+    // Copy the board
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
         board_copy_move[i][j][0] = board_copy[i][j][0];
         board_copy_move[i][j][1] = board_copy[i][j][1];
       }
     }
+
     // Simulate a move
     board_copy_move[free_field / 3][free_field % 3][0] =
         player_here ? 'X' : 'O';
+
     // Check for a win
     char winner = checkWinnerTic(board_copy_move);
-    if (winner == 'X') return make_pair(-1, -1);
-    if (winner == 'O') return make_pair(1, free_field);
+    if (winner == 'X') return {-1, -1};
+    if (winner == 'O') return {1, free_field};
+
     // Recur for the opponent
-    pair<int, int> tmp =
-        getAIinputMinMax(round + 1, board_copy_move, !player_here);
-    results.push_back(tmp.first);
+    Pair tmp = getAIinputMinMaxHelper(round + 1, board_copy_move, !player_here);
+    results[resultCount++] = tmp.first;
   }
+
+  // Find the best move
   int bestResult = player_here ? 2 : -2;
   int move = -1;
-  for (size_t i = 0; i < results.size(); ++i) {
+
+  for (int i = 0; i < resultCount; ++i) {
     int result = results[i];
-    int moveIndex = free_fields[i];
     if ((player_here && result < bestResult) ||
         (!player_here && result > bestResult)) {
       bestResult = result;
-      move = moveIndex;
+      move = free_fields[i];
     }
   }
-  return make_pair(bestResult, move);
+
+  return {bestResult, move};
 }

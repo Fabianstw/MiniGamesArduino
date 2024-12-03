@@ -9,10 +9,10 @@ GameMenu::currentGameChoice GameMenu::gameCH = MENUGAMECHOICE;
 
 /**
  * This is the constructor for the GameMenu class
- * @param u8g The display object
+ * @param u8g The display object (now U8g2)
  * @param keypad The keypad object
  */
-GameMenu::GameMenu(U8GLIB_SSD1306_128X64 &u8g, Keypad &keypad)
+GameMenu::GameMenu(U8GLIB_SH1106_128X64 &u8g, Keypad &keypad)
     : u8g(u8g), keypad(keypad) {}
 
 /**

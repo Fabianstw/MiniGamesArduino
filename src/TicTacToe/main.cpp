@@ -1,16 +1,13 @@
 #include "main.h"
 
-#include <ArduinoSTL.h>
 #include <Keypad.h>
 
-#include <array>
-
 #include "../Menu/menu.h"
+#include "../pitches.h"
 #include "../utils/utils.h"
 #include "Arduino.h"
 #include "TicTacToe.h"
 #include "U8glib.h"
-#include "pitches.h"
 
 using namespace std;
 
@@ -67,7 +64,7 @@ int counterBoardDrawnFinal = 0;
  * @param keypad The Keypad object
  */
 TicTacToeGame::TicTacToeGame(int buzzerPin, int redLightPin, int yellowLightPin,
-                             int greenLightPin, U8GLIB_SSD1306_128X64 u8g,
+                             int greenLightPin, U8GLIB_SH1106_128X64 u8g,
                              Keypad &keypad, GameMenu gameMenu)
     : buzzerPin(buzzerPin),
       redLightPin(redLightPin),
@@ -126,7 +123,7 @@ void TicTacToeGame::initializeBoard() {
  * Function to draw the board on the OLED display
  */
 void TicTacToeGame::drawBoard() {
-  u8g.setFont(u8g_font_tpssb);
+  u8g.setFont(u8g_font_tpss);
   u8g.drawStr(0, 10, board[0][0]);
   u8g.drawStr(10, 10, "|");
   u8g.drawStr(20, 10, board[0][1]);
