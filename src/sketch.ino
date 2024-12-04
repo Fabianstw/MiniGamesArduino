@@ -59,8 +59,8 @@ void setupPinModes() {
 
 void setup(void) {
   u8g.begin();
-  randomSeed(analogRead(11));
   setupPinModes();
+  initializeBoard();
 }
 
 /**
@@ -71,248 +71,401 @@ void setup(void) {
  * #####################################################################
  */
 
-int level = 1;
-char lightSequence[15] = {};
+/*
+For different sound effects, we can use the following melodies:
+*/
+typedef enum {
+  MENU,
+  STANDING_X,
+  STANDING_O,
+  DRAW,
+  GAMEPVSP,
+} GameStatus;
 
-int counterShowLightShow = 0;
-int counterAskForUserInput = 0;
-int counterShowCorrect = 0;
+int startingGame[] = {NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4,
+                      NOTE_E4, NOTE_G4, NOTE_C5, NOTE_E5};
+int startingGameNoteDurations[] = {1, 3, 2, 4, 4, 4, 4, 4};
+int startingGameSize = 8;
 
-enum phaseOfGame {
-  INSTRUCTIONS,
-  SHOWLIGHTSHOW,
-  USERINPUT,
-  WRONGINPUT,
-  CORRECT
-};
-phaseOfGame phase = INSTRUCTIONS;
+int player0MoveNote = NOTE_C5;
+int player0MoveNoteDuration = 75;
+
+int player1MoveNote = NOTE_A4;
+int player1MoveNoteDuration = 150;
+
+int winMelody[] = {NOTE_C5, NOTE_G4, NOTE_E4, NOTE_A4};
+int winMelodyNoteDurations[] = {4, 4, 4, 4};
+int winMelodySize = 4;
+
+int drawMelody[] = {NOTE_C2, NOTE_G5, NOTE_A4, NOTE_A4};
+int drawMelodyNoteDurations[] = {4, 8, 2, 4};
+int drawMelodySize = 4;
+
+bool playWinDrawMelody = true;
+
+// random choose of the start player
+int player = 1;
+int player1Wins = 0;
+int player2Wins = 0;
+int moveCoutner = 0;
+GameStatus gameStatus = MENU;
+char board[3][3][2];
 
 /**
- * Draws a short introduction to the game.
+ * Kinda complete variable
+ * This is set and reset in the game loop
+ * So that the board can be drawn with in one iteration
  */
-void drawInstructions() {
-  u8g.drawStr(0, 10, "Simon Says");
-  u8g.drawStr(0, 20, "Repeat");
-  u8g.drawStr(0, 40, "Press any to start");
+bool boardDrawn = false;
+bool setupGame = false;
+
+int counterLastMove = 0;
+int counterBoardDrawnFinal = 0;
+
+/**
+ * Checks if either X or O has won the game and returns the winner
+ * @param board The current ttt board
+ */
+char checkWinnerTic(char board[3][3][2]) {
+  for (int i = 0; i < 3; i++) {
+    // check rows and columns
+    if (board[i][0][0] == board[i][1][0] && board[i][1][0] == board[i][2][0]) {
+      return board[i][0][0];
+    }
+    if (board[0][i][0] == board[1][i][0] && board[1][i][0] == board[2][i][0]) {
+      return board[0][i][0];
+    }
+  }
+  // check diagonals
+  if (board[0][0][0] == board[1][1][0] && board[1][1][0] == board[2][2][0]) {
+    return board[0][0][0];
+  }
+  // check other diagonal
+  if (board[0][2][0] == board[1][1][0] && board[1][1][0] == board[2][0][0]) {
+    return board[0][2][0];
+  }
+  return ' ';
 }
 
-void drawCorrectAnswer() {
-  u8g.drawStr(0, 30, "Correct:");
-  for (int i = 0; i < level; i++) {
-    u8g.drawStr(0 + i * 10, 40, String(lightSequence[i]).c_str());
+/**
+ * Play music function for given melody and note durations
+ */
+void playMusic(int *melody, int *noteDurations, int length) {
+  for (int thisNote = 0; thisNote < length; thisNote++) {
+    int noteDuration = 1000 / noteDurations[thisNote];
+    tone(buzzerPin, melody[thisNote], noteDuration);
+
+    int pauseBetweenNotes = noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+
+    noTone(buzzerPin);
   }
 }
 
 /**
- * Draws, that is was wrong and the correct answer
+ * Function to initialize the board
  */
-void drawWrongAnswer() {
-  u8g.drawStr(0, 10, "Simon Says:");
-  u8g.drawStr(0, 20, "Bad!");
-  drawCorrectAnswer();
-  u8g.drawStr(0, 50, "Any to restart");
+void initializeBoard() {
+  strcpy(board[0][0], " ");
+  strcpy(board[0][1], " ");
+  strcpy(board[0][2], " ");
+
+  strcpy(board[1][0], " ");
+  strcpy(board[1][1], " ");
+  strcpy(board[1][2], " ");
+
+  strcpy(board[2][0], " ");
+  strcpy(board[2][1], " ");
+  strcpy(board[2][2], " ");
 }
 
 /**
- * Draws the instructions for the user to repeat the sequence.
+ * Function to draw the board on the OLED display
  */
-void drawInstructionsForInput() { u8g.drawStr(20, 30, "Repeat"); }
+void drawBoard() {
+  u8g.drawStr(0, 10, board[0][0]);
+  u8g.drawStr(10, 10, "|");
+  u8g.drawStr(20, 10, board[0][1]);
+  u8g.drawStr(30, 10, "|");
+  u8g.drawStr(40, 10, board[0][2]);
+
+  u8g.drawStr(0, 20, "-");
+  u8g.drawStr(10, 20, "|");
+  u8g.drawStr(20, 20, "-");
+  u8g.drawStr(30, 20, "|");
+  u8g.drawStr(40, 20, "-");
+
+  u8g.drawStr(0, 30, board[1][0]);
+  u8g.drawStr(10, 30, "|");
+  u8g.drawStr(20, 30, board[1][1]);
+  u8g.drawStr(30, 30, "|");
+  u8g.drawStr(40, 30, board[1][2]);
+
+  u8g.drawStr(0, 40, "-");
+  u8g.drawStr(10, 40, "|");
+  u8g.drawStr(20, 40, "-");
+  u8g.drawStr(30, 40, "|");
+  u8g.drawStr(40, 40, "-");
+
+  u8g.drawStr(0, 50, board[2][0]);
+  u8g.drawStr(10, 50, "|");
+  u8g.drawStr(20, 50, board[2][1]);
+  u8g.drawStr(30, 50, "|");
+  u8g.drawStr(40, 50, board[2][2]);
+}
 
 /**
- * Gets the key input from the user to start the game.
+ * Function to draw the player's turn on the OLED display
  */
-void getInstructionsKey() {
-  char key = keypad.getKey();
-  if (key != NO_KEY) {
-    phase = SHOWLIGHTSHOW;
+void drawPlayersTurn() {
+  if (player == 0) {
+    u8g.drawStr(9, 62, "P1: X");
+  } else {
+    u8g.drawStr(9, 62, "P2: O");
   }
 }
 
 /**
- * Shows the corresponding light and plays a sound for a given light ID.
- * @param lightID The ID of the light to show.
+ * Function to draw the game standings on the OLED display
+ * P1: x   P2: y
  */
-void showCorrespondingLightAndPlaySound(int lightID) {
-  switch (lightID) {
-    case 0:
-      digitalWrite(greenLightPin, HIGH);
-      tone(buzzerPin, NOTE_G4, 200);
-      break;
-    case 1:
-      digitalWrite(yellowLightPin, HIGH);
-      tone(buzzerPin, NOTE_A4, 200);
-      break;
-    case 2:
-      digitalWrite(redLightPin, HIGH);
-      tone(buzzerPin, NOTE_B4, 200);
-      break;
-    default:
-      digitalWrite(blueLightPin, HIGH);
-      tone(buzzerPin, NOTE_C5, 200);
-      break;
-  }
-  delay(200);
-  noTone(buzzerPin);
-  delay(200);
-  resetLights();
-  delay(200);
+void drawGameStandings() {
+  u8g.drawStr(60, 10, "Points:");
+  u8g.drawStr(60, 22, "P1: ");
+  u8g.drawStr(80, 22, String(player1Wins).c_str());
+  u8g.drawStr(95, 22, "P2: ");
+  u8g.drawStr(115, 22, String(player2Wins).c_str());
 }
 
 /**
- * Resets all lights to LOW.
+ * Function to draw the game status on the OLED display
+ */
+void drawGameStatus() {
+  if (gameStatus == STANDING_O) {
+    u8g.drawStr(60, 62, "Player O wins!");
+  } else if (gameStatus == STANDING_X) {
+    u8g.drawStr(60, 40, "Player X wins!");
+  } else if (gameStatus == DRAW) {
+    u8g.drawStr(60, 62, "Draw!");
+  }
+}
+
+/**
+ * Function to draw the main display on the OLED
+ */
+void drawMainDisplay(void) {
+  drawBoard();
+  drawPlayersTurn();
+  drawGameStandings();
+  drawGameStatus();
+}
+
+/**
+ * Function to draw the menu on the OLED display
+ */
+void drawMenu(void) {
+  u8g.drawStr(0, 10, "Tic Tac Toe");
+  u8g.drawStr(0, 20, "1: P vs P");
+  u8g.drawStr(0, 30, "2: P vs AI");
+}
+
+/**
+ * Function to reset the lights
+ * (red, yellow, green are turned off)
  */
 void resetLights() {
   digitalWrite(redLightPin, LOW);
   digitalWrite(yellowLightPin, LOW);
   digitalWrite(greenLightPin, LOW);
-  digitalWrite(blueLightPin, LOW);
 }
 
 /**
- * Displays the light show for the user to repeat.
+ * Function to get the user input for the game
+ * Calculates the row and col and updates the board
+ * (if its a valid move)
  */
-void displayLightShow() {
-  for (int i = 0; i < level; i++) {
-    int randomLight = random(0, 4);
-    lightSequence[i] = randomLight;
-    showCorrespondingLightAndPlaySound(randomLight);
-  }
-  phase = USERINPUT;
-}
-
-/**
- * Shows a short text on the screen to watch the lights.
- */
-void screenLightShow() { u8g.drawStr(20, 30, "Watch!"); }
-
-/**
- * Gets the user input for the light IDs.
- * Compares each input with the corresponding light in the sequence.
- */
-void getUserInputLightIDs() {
-  int keyInputCounter = 0;
-  while (keyInputCounter < level && phase == USERINPUT) {
-    char key = keypad.getKey();
-    if (key != NO_KEY) {
-      comparesUserinputWithSequence(key, keyInputCounter);
-    }
-  }
-  goesToNextLevel(keyInputCounter);
-}
-
-/**
- * Compares the user input with the light sequence.
- * @param key The key input from the user.
- * @param keyInputCounter the index (which current light to compare)
- */
-void comparesUserinputWithSequence(char key, int &keyInputCounter) {
-  if (key >= '0' && key <= '3') {
-    if (lightSequence[keyInputCounter] == key - '0') {
-      showCorrespondingLightAndPlaySound(key - '0');
-      keyInputCounter++;
-    } else {
-      phase = WRONGINPUT;
+void getUserInputGame() {
+  char key = keypad.getKey();
+  if (key >= '1' && key <= '9') {
+    int position = key - '1';
+    int row = position / 3;
+    int col = position % 3;
+    if (strcmp(board[row][col], " ") == 0) {
+      updateBoard(row, col);
+      moveCoutner++;
+      playPlayerMoveSound();
+      return;
     }
   }
 }
 
 /**
- * Checks if the user input was correct and goes to the next level.
- * Otherwise sets phase to WRONGINPUT.
- * @param keyInputCounter The counter for the user input.
+ * Function to update the board with the player's move
+ * @param row The row number of the board
+ * @param col The column number of the board
  */
-void goesToNextLevel(int keyInputCounter) {
-  if (keyInputCounter == level) {
-    level++;
-    phase = CORRECT;
+void updateBoard(int row, int col) {
+  if (player == 0) {
+    strcpy(board[row][col], "X");
+    player = 1;
   } else {
-    phase = WRONGINPUT;
+    strcpy(board[row][col], "O");
+    player = 0;
   }
 }
 
 /**
- * Gets the key input from the user to go to the menu or play again.
+ * Function to play the sound of the player's move
  */
-void getWrongMenuKey() {
+void playPlayerMoveSound() {
+  if (player == 0) {
+    tone(buzzerPin, player0MoveNote, player0MoveNoteDuration);
+  } else {
+    tone(buzzerPin, player1MoveNote, player1MoveNoteDuration);
+  }
+}
+
+/**
+ * Gets the user input for the menu
+ */
+void getUserInputMenu() {
+  char key = keypad.getKey();
+  if (key == '1') {
+    gameStatus = GAMEPVSP;
+    initializeBoard();
+    return;
+  }
+}
+
+/**
+ * Gets the user input after the game
+ * So the player can see the standings
+ * Any key press will get him back to the
+ * tic tac toe menu
+ */
+void getUserInputStanding() {
   char key = keypad.getKey();
   if (key != NO_KEY) {
-    phase = SHOWLIGHTSHOW;
-    level = 1;
+    resetGame();
+  }
+  return;
+}
+
+/**
+ * Resets the game, so a new round can be played
+ * Standnings are obviously kept
+ */
+void resetGame() {
+  gameStatus = MENU;
+  initializeBoard();
+  moveCoutner = 0;
+  player = 1 - player;
+  playWinDrawMelody = true;
+  counterBoardDrawnFinal = 0;
+  counterLastMove = 0;
+  resetLights();
+}
+
+/**
+ * Plays music if the game has ended
+ */
+void playGameEndMusic() {
+  if (gameStatus == STANDING_O) {
+    if (playWinDrawMelody) {
+      digitalWrite(redLightPin, HIGH);
+      playMusic(winMelody, winMelodyNoteDurations, winMelodySize);
+    }
+  } else if (gameStatus == STANDING_X) {
+    if (playWinDrawMelody) {
+      digitalWrite(greenLightPin, HIGH);
+      playMusic(winMelody, winMelodyNoteDurations, winMelodySize);
+    }
+  } else {
+    if (playWinDrawMelody) {
+      digitalWrite(yellowLightPin, HIGH);
+      playMusic(drawMelody, drawMelodyNoteDurations, drawMelodySize);
+    }
+  }
+  playWinDrawMelody = false;
+}
+
+/**
+ * Checks if one player has won
+ */
+void checkForWinner() {
+  if (checkWinnerTic(board) != ' ') {
+    if (checkWinnerTic(board) == 'X') {
+      gameStatus = STANDING_X;
+      player1Wins++;
+    } else {
+      gameStatus = STANDING_O;
+      player2Wins++;
+    }
   }
 }
 
 /**
- * Shows the instructions and asks for the user input.
+ * Checks if the game is a draw
+ * (all the cells are filled) and no one has won
  */
-void loopPhaseInstructions() {
-  drawInstructions();
-  getInstructionsKey();
-}
-
-/**
- * Shows the light show and displays to watch on the screen.
- */
-void loopPhaseShowLightShow() {
-  screenLightShow();
-  if (counterShowLightShow >= 100) {
-    displayLightShow();
-    counterShowLightShow = 0;
+void checkForDraw() {
+  if (moveCoutner == 9 && gameStatus != STANDING_X &&
+      gameStatus != STANDING_O) {
+    gameStatus = DRAW;
   }
-  counterShowLightShow++;
 }
 
 /**
- * Shows the instructions for the user input.
- * Should repeat the sequence of lights.
+ * Checks if one player has won
+ * or if the game is a draw
  */
-void loopPhaseUserinput() {
-  drawInstructionsForInput();
-  if (counterAskForUserInput >= 40) {
-    getUserInputLightIDs();
-    counterAskForUserInput = 0;
+void checkForGameEnding() {
+  checkForWinner();
+  checkForDraw();
+}
+
+/**
+ * Loop for the end of the game
+ * Show the standings, lights a led and plays music
+ */
+void loopEnd() {
+  drawMainDisplay();
+  boardDrawn = true;
+  getUserInputStanding();
+  if (counterBoardDrawnFinal > 50) {
+    playGameEndMusic();
+    counterBoardDrawnFinal = -32000;
   }
-  counterAskForUserInput++;
+  counterBoardDrawnFinal++;
+}
+
+void loopGame() {
+  drawMainDisplay();
+  boardDrawn = !boardDrawn;  // Set the flag after drawing the board
+  checkForGameEnding();
+  getUserInputGame();
+  boardDrawn = true;  // Set the flag after drawing the board
 }
 
 /**
- * Shows the input was wrong, the correct answer and aks
- * for the user to go to the menu or play again.
+ * Loop for the tictactoe menu
  */
-void loopPhaseWronginput() {
-  drawWrongAnswer();
-  getWrongMenuKey();
+void loopMenu() {
+  drawMenu();
+  getUserInputMenu();
 }
 
-/**
- * Shortly shows the input by the user has been correct.
- */
-void loopPhaseCorrect() {
-  u8g.drawStr(0, 30, "Correct!");
-  if (counterShowCorrect > 35) {
-    phase = SHOWLIGHTSHOW;
-    counterShowCorrect = 0;
-  }
-  counterShowCorrect++;
-}
-
-/**
- * The main loop for the Simon Says game.
- * Displays the instructions, light show, user input, and wrong input.
- */
-void mainLoopSimon() {
+void mainLoopTic() {
   u8g.firstPage();
   do {
-    u8g.setFont(u8g2_font_6x13_tf);
-    if (phase == INSTRUCTIONS) {
-      loopPhaseInstructions();
-    } else if (phase == SHOWLIGHTSHOW) {
-      loopPhaseShowLightShow();
-    } else if (phase == USERINPUT) {
-      loopPhaseUserinput();
-    } else if (phase == WRONGINPUT) {
-      loopPhaseWronginput();
-    } else if (phase == CORRECT) {
-      loopPhaseCorrect();
+    u8g.setFont(u8g2_font_u8glib_4_hr);
+    if (gameStatus == MENU) {
+      loopMenu();
+    } else if (gameStatus == GAMEPVSP) {
+      loopGame();
+    } else if (gameStatus == STANDING_X || gameStatus == STANDING_O ||
+               gameStatus == DRAW) {
+      loopEnd();
     }
   } while (u8g.nextPage());
 }
@@ -325,4 +478,4 @@ void mainLoopSimon() {
  * #####################################################################
  */
 
-void loop(void) { mainLoopSimon(); }
+void loop(void) { mainLoopTic(); }

@@ -1,4 +1,4 @@
-#include "../pitches.h"
+#include "pitches.h"
 
 int starWarsMelody[] = {
     NOTE_G4,  4, NOTE_G4,  4, NOTE_G4,  4, NOTE_DS4, 8, NOTE_AS4, 8, NOTE_G4, 4,
