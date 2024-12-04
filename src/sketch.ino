@@ -265,8 +265,7 @@ void drawMainDisplay(void) {
  */
 void drawMenu(void) {
   u8g.drawStr(0, 10, "Tic Tac Toe");
-  u8g.drawStr(0, 20, "1: P vs P");
-  u8g.drawStr(0, 30, "2: P vs AI");
+  u8g.drawStr(0, 20, "1: start");
 }
 
 /**

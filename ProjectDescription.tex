@@ -24,9 +24,9 @@
   \hline
   \textbf{Project name} & \textbf{Mini Games} using Arduino  \\ \hline
   
-  \textbf{Coding files} & All necessary files for coding should be located inside the \texttt{src} folder. Inside that folder create a subfolder for each game and use the \texttt{sketch.ino} file as the main input source.  \\ \hline
+  \textbf{Coding files / How to use} & All necessary files for uploading the current game should be located inside the \texttt{src} or \texttt{sketch} folder. All other games, which are programmed, but currently unused can be placed inside the \texttt{otherGameList} folder. \textcolor{red}{Don't worry about errors there, it only works inside the \textbf{sketch} folder.} If you want to play a specific game, copy all necessary files into the \texttt{sketch} folder and paste the source code into the \textbf{sketch.ino} file. Only include the file, \textbf{mandatory} files for this specific game. \\ \hline
   
-  \textbf{Storyline} & It is simple and quick to develop diverse games for the Arduino. This project includes the classic TicTacToe game (with a simple computer player), the known SimonSaysGame and a music player. 
+  \textbf{Storyline} & It is simple and quick to develop diverse games for the Arduino. This project includes the classic TicTacToe game, the known SimonSaysGame and a music player. 
   \begin{itemize}
     \item TicTacToe a simple two-player game where players take turns marking a 3x3 grid with their respective symbols (usually X and O). The objective is to be the first to get three of your symbols in a row, either horizontally, vertically, or diagonally. If all nine squares are filled without either player achieving this, the game is considered a draw.
     \item SimonSaysGame is a memory game that uses 4 lights. The game generates a random sequence of lights, and the player must repeat the sequence in the correct order. Each round, the sequence gets longer, increasing the difficulty. The player wins by successfully repeating the sequence for a set number of rounds or loses if they make a mistake.
@@ -38,24 +38,21 @@
   \textbf{Level} & 
   The base outline will be given to the students, so they only have to program the games.
   \begin{itemize}
-    \item TicTacToe (intermediate)
-    \item TicTacToe AI (hard)
+    \item TicTacToe (hard)
     \item SimonSaysGame (intermediate)
     \item Music (easy)
     \item any other game the students want to program (difficulty depends on the game)
   \end{itemize} \\ \hline
   
-  \textbf{Learning goals} & The students should get used to program on the Arduino and Cpp. Over that they will have to learn how to use different hardware components (e.g. display, keypad, lights and so on). Depending on each student's interest they can choose to do a game with more or less hardware. Students have to acquire information themselves, depending on their project choice. Therefore, independent learning is encouraged very much. \\ \hline
+  \textbf{Learning goals} & The students should get used to program on the Arduino. Over that they will have to learn how to use different hardware components (e.g. display, keypad, lights and so on). Depending on each student's interest they can choose to do a game with more or less hardware. Students have to acquire information themselves, depending on their project choice. Therefore, independent learning is encouraged very much. \\ \hline
   
-  \textbf{Hardware} & Each student has to understand how to use:
-  \begin{itemize}
-    \item keypad
-    \item oled display
-  \end{itemize} 
+  \textbf{Hardware} & 
+  Each student has to understand using the \textit{Arduino} component. 
+
   Over that it depends on the preference of each student, what their project is about. Some prefer more hardware and some less, so they are not forced to a specific hardware. \\ & \textbf{Just experiment around :-)}
   \\ \hline
   
-  \textbf{Software} & The students will have to learn how to write clean and safe code in \textit{Cpp}. They will have to use GitHub for collaboration (no terminal just via IDE).  \\ \hline
+  \textbf{Software} & The students will have to learn how to write clean and safe code. They will have to use GitHub for collaboration (no terminal just via IDE or terminal with teachers assistance).  \\ \hline
   
   \textbf{Operating description} & As we discussed earlier, this project is all about encouraging students to explore their programming skills independently. They should find an interesting game online and just start coding it. The teacher will be there to help them with any hardware or software issues they might encounter. Likely this will be a group project, so students can help each other (size 2-4 persons per group).
   \\ \hline
@@ -73,12 +70,9 @@
     \item wokwi-resistor
     \item wokwi-led ($220 \Omega$)
     \begin{itemize}
-      \item blue
-      \item green
-      \item red
-      \item blue
+      \item diverse colors
     \end{itemize}
-    \item diverse cabels
+    \item diverse cables
   \end{itemize}
   \\ \hline
   

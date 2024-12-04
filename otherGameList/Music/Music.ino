@@ -1,22 +1,22 @@
 /*
-sketch.ino (MiniGames Project)
+Music.ino (MiniGames Project)
 
-This file is the main file for the MiniGames project. It contains the setup and
-loop functions for the Arduino. The setup function initializes the pins and
-serial communication. The loop function contains the main game loop that
-determines which game to play based on the user's input.
+This file can be used if the user wants to play different songs.
 
-The MiniGames project contains two games: Tic Tac Toe and Simon Says, also some
-music sound tracks.
+Inside the folder `arduino-songs-master` are a couple of different songs
+which can be used inside songs.h.
+
+`void mainLoopMusic() { playMeldoy(melodies[2], melodyLengths[2]); }`
+select the corresponding index from the songs.g file to play your song.
 
 @author: Fabian Stiewe
 @data: 10.11.2024
 
 Used libraries:
-- U8glib
+- U8g2lib
 - Keypad
 Those are listed in the libaries folder, but should be installed via the Arduino
-IDE.
+IDE. (Not used here, but listed since they are included in the project.)
 
 */
 #include <Keypad.h>
