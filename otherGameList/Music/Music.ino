@@ -4,7 +4,8 @@ Music.ino (MiniGames Project)
 This file can be used if the user wants to play different songs.
 
 Inside the folder `arduino-songs-master` are a couple of different songs
-which can be used inside songs.h.
+which can be used inside songs.h. Just copy the melody add it to the songlist
+and select the index in the mainLoopMusic function.
 
 `void mainLoopMusic() { playMeldoy(melodies[2], melodyLengths[2]); }`
 select the corresponding index from the songs.g file to play your song.
