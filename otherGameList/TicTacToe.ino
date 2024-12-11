@@ -2,6 +2,11 @@
 TicTacToe.ino (MiniGames Project)
 
 This file contains the code for the TicTacToe game.
+It is a two player game where the players can play against each other.
+The game is displayed on an OLED display and the players can use a
+keypad to make their moves.
+For different game outcomes, different melodies are played and different
+lights are turned on.
 
 @author: Fabian Stiewe
 @data: 10.11.2024
@@ -9,9 +14,8 @@ This file contains the code for the TicTacToe game.
 Used libraries:
 - U8g2lib
 - Keypad
-Those are listed in the libaries folder, but should be installed via the Arduino
-IDE.
-
+Those are also inside the libaries folder, but should be installed
+via the Arduino IDE.
 */
 
 #include <Keypad.h>
@@ -20,6 +24,14 @@ IDE.
 #include "Arduino.h"
 #include "pitches.h"
 using namespace std;
+
+/**
+ * #####################################################################
+ *
+ * Setup code for fixed variables
+ *
+ * #####################################################################
+ */
 
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 
@@ -97,7 +109,6 @@ int drawMelodySize = 4;
 
 bool playWinDrawMelody = true;
 
-// random choose of the start player
 int player = 1;
 int player1Wins = 0;
 int player2Wins = 0;

@@ -14,7 +14,6 @@ Used libraries:
 - Keypad
 Those are listed in the libaries folder, but should be installed via the Arduino
 IDE.
-
 */
 
 #include <Keypad.h>
