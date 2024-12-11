@@ -95,7 +95,9 @@ void drawInstructions() {
 void drawCorrectAnswer() {
   u8g.drawStr(0, 30, "Correct:");
   for (int i = 0; i < level; i++) {
-    u8g.drawStr(0 + i * 10, 40, String(lightSequence[i]).c_str());
+    char buffer[2];
+    itoa(lightSequence[i], buffer, 10);
+    u8g.drawStr(0 + i * 10, 40, buffer);
   }
 }
 
