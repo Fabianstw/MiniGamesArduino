@@ -8,6 +8,8 @@ keypad to make their moves.
 For different game outcomes, different melodies are played and different
 lights are turned on.
 
+More detailed information are in the file titled "ProjectDocumenation.pdf".
+
 @author: Fabian Stiewe
 @data: 10.11.2024
 
@@ -33,8 +35,15 @@ using namespace std;
  * #####################################################################
  */
 
+/** From Oled instructions pdf
+ * https://www.az-delivery.de/en/collections/kostenlose-e-books
+ */
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 
+/**
+ * Code and documentation for the keypad
+ * https://www.az-delivery.de/en/products/4x4-matrix-keypad
+ */
 const uint8_t KEYPAD_ROWS = 4;
 const uint8_t KEYPAD_COLS = 4;
 char keys[KEYPAD_ROWS][KEYPAD_COLS] = {{'1', '2', '3', 'A'},
@@ -77,9 +86,6 @@ void setup(void) {
  * #####################################################################
  */
 
-/*
-For different sound effects, we can use the following melodies:
-*/
 typedef enum {
   MENU,
   STANDING_X,
@@ -88,6 +94,7 @@ typedef enum {
   GAMEPVSP,
 } GameStatus;
 
+// Meldoies and notes for the game
 int startingGame[] = {NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4,
                       NOTE_E4, NOTE_G4, NOTE_C5, NOTE_E5};
 int startingGameNoteDurations[] = {1, 3, 2, 4, 4, 4, 4, 4};

@@ -12,17 +12,7 @@ select the corresponding index from the songs.g file to play your song.
 
 @author: Fabian Stiewe
 @data: 10.11.2024
-
-Used libraries:
-- U8g2lib
-- Keypad
-Those are listed in the libaries folder, but should be installed via the Arduino
-IDE. (Not used here, but listed since they are included in the project.)
-
 */
-#include <Keypad.h>
-#include <U8g2lib.h>
-
 #include "Arduino.h"
 #include "pitches.h"
 #include "songs.h"
